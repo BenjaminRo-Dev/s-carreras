@@ -17,6 +17,7 @@ use App\Http\Controllers\GrupoEstudianteController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\MateriaEstudianteController;
 use App\Http\Controllers\PlanEstudioController;
+use App\Jobs\GuardarFacultadJob;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -28,7 +29,7 @@ Route::get('/hola', function () {
 Route::get('/plan-estudio/{carrera}', [PlanEstudioController::class, 'getMaterias']);
 Route::get('/materias', [MateriaController::class, 'index']);
 
-Route::apiResource('facultades', FacultadController::class);
+Route::apiResource('facultades', FacultadController::class)->parameters(['facultades' => 'facultad']);
 Route::apiResource('carreras', CarreraController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
