@@ -12,7 +12,7 @@ class CarreraController extends Controller
 {
     public function index()
     {
-        return "asdasd";
+        // return "asdasd";
         return Carrera::with('planesEstudio.materiaPlanes.materia')->paginate(1);
     }
 
