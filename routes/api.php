@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AulaController;
 use App\Http\Controllers\AuthController;
@@ -15,9 +14,7 @@ use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\FacultadController;
 use App\Http\Controllers\GrupoEstudianteController;
 use App\Http\Controllers\InscripcionController;
-use App\Http\Controllers\MateriaEstudianteController;
 use App\Http\Controllers\PlanEstudioController;
-use App\Jobs\GuardarFacultadJob;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -32,7 +29,7 @@ Route::get('/materias', [MateriaController::class, 'index']);
 Route::apiResource('facultades', FacultadController::class)->parameters(['facultades' => 'facultad']);
 Route::apiResource('carreras', CarreraController::class);
 
-Route::middleware(['auth:sanctum'])->group(function () {
+// Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
@@ -110,4 +107,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Rutas especiales para consultas específicas
     Route::get('/estudiantes/{estudiante_id}/notas', [GrupoEstudianteController::class, 'notasEstudiante']);
+// });
+
+
+use Illuminate\Support\Facades\Artisan;
+Route::get('/procesar-cola/{cola}', function($cola) {
+    Artisan::call('queue:work', [
+        '--queue' => $cola,
+        '--once' => true,
+    ]);
+
+    return "Cola '$cola' procesada.";
 });

@@ -15,7 +15,7 @@ class DetalleInscripcionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'fecha' => 'required|date',
+            // 'fecha' => 'required|date',
             'inscripcion_id' => 'required|exists:inscripciones,id',
             'grupo_id' => 'required|exists:grupos,id'
         ]);

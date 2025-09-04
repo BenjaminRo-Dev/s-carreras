@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\DestroyJob;
+use App\Jobs\StoreJob;
+use App\Jobs\UpdateJob;
 use App\Models\Carrera;
 use App\Models\Materia;
 use Illuminate\Http\Request;
@@ -16,7 +19,6 @@ class MateriaController extends Controller
         return $materias;
     }
 
-
     public function index()
     {
         return Materia::with(['nivel', 'tipo', 'prerequisitos', 'esPrerequisitoDe', 'materiaPlanes'])->get();
@@ -24,7 +26,8 @@ class MateriaController extends Controller
 
     public function store(Request $request)
     {
-        return Materia::create($request->all());
+        StoreJob::dispatch(Materia::class, $request->all());
+        return response()->json(['message' => 'Materia en proceso de creación'], 202);
     }
 
     public function show(string $id)
@@ -34,15 +37,13 @@ class MateriaController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $materia = Materia::findOrFail($id);
-        $materia->update($request->all());
-        return $materia;
+        UpdateJob::dispatch(Materia::class, $id, $request->all());
+        return response()->json(['message' => 'Materia en proceso de actualización'], 202);
     }
 
     public function destroy(string $id)
     {
-        $materia = Materia::findOrFail($id);
-        $materia->delete();
-        return response()->noContent();
+        DestroyJob::dispatch(Materia::class, $id);
+        return response()->json(['message' => 'Materia en proceso de eliminación'], 202);
     }
 }

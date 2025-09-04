@@ -13,7 +13,10 @@ use function Illuminate\Log\log;
 
 class StoreJob implements ShouldQueue
 {
-    use Dispatchable;
+    use Queueable, Dispatchable;
+
+    public $tries = 3;
+    // public $backoff = 5;
 
     protected string $modelo;
     protected array $datos;

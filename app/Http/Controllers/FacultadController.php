@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\DestroyJob;
 use App\Models\Facultad;
 use Illuminate\Http\Request;
 use App\Jobs\StoreJob;
+use App\Jobs\UpdateJob;
 
 class FacultadController extends Controller
 {
@@ -20,27 +22,20 @@ class FacultadController extends Controller
 
     public function store(Request $request)
     {
-        // GuardarFacultadJob::dispatch($request->all());
-        // GuardarFacultadJob::dispatch($request->all())->onQueue('principal');
-
-        StoreJob::dispatch(Facultad::class, $request->all());
-
+        StoreJob::dispatch(Facultad::class, $request->all())->onQueue($request->header('Cola', 'default'));
         return response()->json(['message' => 'Facultad en proceso de creación'], 202);
     }
 
     public function update(Request $request, $id)
     {
-
-        // CrudJob::dispatch(new Facultad(), UpdateAction::class, $request->all(), $id);
-        // CrudJob::dispatch(Facultad::class, 'update', $request->all(), $id);
-
+        UpdateJob::dispatch(Facultad::class, $id, $request->all());
         return response()->json(['message' => 'Facultad en proceso de actualización'], 202);
 
     }
 
     public function destroy($id)
     {
-        Facultad::destroy($id);
-        return response()->json(null, 204);
+        DestroyJob::dispatch(Facultad::class, $id);
+        return response()->json(['message' => 'Facultad en proceso de eliminación'], 202);
     }
 }

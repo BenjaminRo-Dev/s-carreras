@@ -21,7 +21,10 @@ class Estudiante extends Model
         return $this->hasMany(Inscripcion::class, 'estudiante_id');
     }
 
-    // TODO: Relacion con modelo GrupoEstudiante 1 estudiante esta en muchos GrupoEstudiante
+    public function grupoEstudiantes()
+    {
+        return $this->hasMany(GrupoEstudiante::class, 'estudiante_id');
+    }
 
 
     public function user()

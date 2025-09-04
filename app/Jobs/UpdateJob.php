@@ -34,9 +34,6 @@ class UpdateJob implements ShouldQueue
             log()->info("Registro actualizado para el modelo: {$this->modelo}");
         } catch (Throwable $e) {
             log()->error("Error al actualizar el modelo '{$this->modelo}': " . $e->getMessage());
-
-            // reintentar el job: $this->release();
-            // marcarlo como fallido: $this->fail($e);
         }
     }
 }
