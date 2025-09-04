@@ -29,11 +29,6 @@ class UpdateJob implements ShouldQueue
     public function handle(): void
     {
         try {
-            if (!class_exists($this->modelo)) {
-                log()->error("Error: La clase del modelo '{$this->modelo}' no existe.");
-                return;
-            }
-
             $this->modelo::where('id', $this->id)->update($this->datos);
 
             log()->info("Registro actualizado para el modelo: {$this->modelo}");

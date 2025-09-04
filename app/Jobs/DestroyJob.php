@@ -27,13 +27,7 @@ class DestroyJob implements ShouldQueue
     public function handle(): void
     {
         try {
-            if (!class_exists($this->modelo)) {
-                log()->error("Error: La clase del modelo '{$this->modelo}' no existe.");
-                return;
-            }
-
             $this->modelo::destroy($this->id);
-
             log()->info("Registro eliminado para el modelo: {$this->modelo}");
         } catch (Throwable $e) {
             log()->error("Error al eliminar el modelo '{$this->modelo}': " . $e->getMessage());
