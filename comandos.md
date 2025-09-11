@@ -38,3 +38,5 @@ php artisan serve --port=8080
 php artisan reverb:start --debug
 php artisan queue:work
 
+vendor/bin/sail up -d
+
