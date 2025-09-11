@@ -128,4 +128,7 @@ Route::get('/detener-cola', function() {
     return "Worker de la cola detenido.";
 });
 
+use App\Http\Controllers\EstadoController;
+Route::get('/estado/{uuid}', [EstadoController::class, 'consultarEstado']);
+
 

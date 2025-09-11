@@ -40,3 +40,10 @@ php artisan queue:work
 
 vendor/bin/sail up -d
 
+./vendor/bin/sail artisan route:list
+./vendor/bin/sail artisan queue:work
+
+**Redis:**
+    docker exec -it s-carreras-redis-1 redis-cli
+    select 1
+    keys * 

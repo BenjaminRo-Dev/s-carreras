@@ -24,10 +24,11 @@ services:
         depends_on:
             - pgsql
             - redis
+            - rabbitmq
     pgsql:
         image: 'postgres:17-alpine'
         ports:
-            - '${FORWARD_DB_PORT:-5433}:5433'
+            - '${FORWARD_DB_PORT:-5433}:5432'
         environment:
             PGPASSWORD: '${DB_PASSWORD:-secret}'
             POSTGRES_DB: '${DB_DATABASE}'
@@ -64,6 +65,30 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+    rabbitmq:
+        image: 'rabbitmq:4-management-alpine'
+        hostname: rabbitmq
+        ports:
+            - '${FORWARD_RABBITMQ_PORT:-5672}:5672'
+            - '${FORWARD_RABBITMQ_DASHBOARD_PORT:-15672}:15672'
+        environment:
+            # RABBITMQ_HOST: '%'
+            RABBITMQ_USER: '${RABBITMQ_USER:-guest}'
+            RABBITMQ_PASSWORD: '${RABBITMQ_PASSWORD:-guest}'
+            RABBITMQ_VHOST: '${RABBITMQ_VHOST:-/}'
+            # RABBITMQ_QUEUE: '${RABBITMQ_QUEUE:-default}'
+        volumes:
+            - 'sail-rabbitmq:/var/lib/rabbitmq'
+        networks:
+            - sail
+        healthcheck:
+            test:
+                - CMD
+                - rabbitmq-diagnostics
+                - '-q'
+                - ping
+            retries: 3
+            timeout: 5s
 networks:
     sail:
         driver: bridge
@@ -71,4 +96,6 @@ volumes:
     sail-pgsql:
         driver: local
     sail-redis:
+        driver: local
+    sail-rabbitmq:
         driver: local
