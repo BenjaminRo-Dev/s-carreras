@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 use function Illuminate\Log\log;
@@ -17,23 +18,23 @@ class DestroyJob implements ShouldQueue
 
     protected string $modelo;
     protected int $id;
+    protected string $uuid;
+    public $tries = 3;
 
-    public function __construct(string $modelo, int $id)
+    public function __construct(string $modelo, int $id, string $uuid)
     {
         $this->modelo = $modelo;
         $this->id = $id;
+        $this->uuid = $uuid;
     }
 
     public function handle(): void
     {
         try {
             $this->modelo::destroy($this->id);
-            log()->info("Registro eliminado para el modelo: {$this->modelo}");
+            Cache::forget("t:{$this->uuid}");
         } catch (Throwable $e) {
-            log()->error("Error al eliminar el modelo '{$this->modelo}': " . $e->getMessage());
-
-            // reintentar el job: $this->release();
-            // marcarlo como fallido: $this->fail($e);
+            Cache::put("t:{$this->uuid}", "fallido", 3600);
         }
     }
 }

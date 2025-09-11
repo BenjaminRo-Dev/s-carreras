@@ -37,8 +37,6 @@ class StoreJob implements ShouldQueue
             $this->modelo::create($this->datos);
             Cache::forget("t:{$this->uuid}");
             // broadcast(new JobFinalizado($this->datos));
-
-            // log()->info("Registro creado para el modelo: {$this->modelo}");
         } catch (Throwable $e) {
             Cache::put("t:{$this->uuid}", "fallido", 3600);
             // log()->error("Error al guardar el modelo '{$this->modelo}': " . $e->getMessage());

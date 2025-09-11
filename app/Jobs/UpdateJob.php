@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 use function Illuminate\Log\log;
@@ -18,22 +19,25 @@ class UpdateJob implements ShouldQueue
     protected string $modelo;
     protected array $datos;
     protected int $id;
+    public string $uuid;
+    public $tries = 3;
 
-    public function __construct(string $modelo, int $id, array $datos)
+    public function __construct(string $modelo, int $id, array $datos, string $uuid)
     {
         $this->modelo = $modelo;
         $this->id = $id;
         $this->datos = $datos;
+        $this->uuid = $uuid;
     }
 
     public function handle(): void
     {
         try {
             $this->modelo::where('id', $this->id)->update($this->datos);
-
-            log()->info("Registro actualizado para el modelo: {$this->modelo}");
+            Cache::forget("t:{$this->uuid}");
         } catch (Throwable $e) {
-            log()->error("Error al actualizar el modelo '{$this->modelo}': " . $e->getMessage());
+            Cache::put("t:{$this->uuid}", "fallido", 3600);
+            // log()->error("Error al actualizar el modelo '{$this->modelo}': " . $e->getMessage());
         }
     }
 }
