@@ -6,6 +6,8 @@ use App\Jobs\StoreInscripcionJob;
 use App\Models\DetalleInscripcion;
 use App\Models\Inscripcion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class InscripcionController extends Controller
 {
@@ -34,9 +36,16 @@ class InscripcionController extends Controller
             'grupos.*'      => ['integer'],
         ]);
 
-        StoreInscripcionJob::dispatch($datos)->onQueue('alta');
+        $uuid = (string) Str::uuid();
+        StoreInscripcionJob::dispatch($datos, $uuid);
+        Cache::put("t:$uuid", "en_proceso", 1800);
 
-        return response()->json(['message' => 'Inscripción en proceso'], 202);
+        return response()->json([
+            'message' => "Inscripción en proceso",
+            'url' => url("api/estado/$uuid"),
+            'transaction_id' => $uuid,
+            'status' => 'en_proceso'
+        ], 202);
     }
 
 
