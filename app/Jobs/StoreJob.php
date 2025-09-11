@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\JobFinalizado;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,13 +32,12 @@ class StoreJob implements ShouldQueue
     {
         try {
             $this->modelo::create($this->datos);
+            broadcast(new JobFinalizado($this->datos));
 
             log()->info("Registro creado para el modelo: {$this->modelo}");
         } catch (Throwable $e) {
             log()->error("Error al guardar el modelo '{$this->modelo}': " . $e->getMessage());
 
-            // reintentar el job: $this->release();
-            // marcarlo como fallido: $this->fail($e);
         }
     }
 }

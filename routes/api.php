@@ -15,6 +15,9 @@ use App\Http\Controllers\FacultadController;
 use App\Http\Controllers\GrupoEstudianteController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\PlanEstudioController;
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::routes();
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -119,3 +122,10 @@ Route::get('/procesar-cola/{cola}', function($cola) {
 
     return "Cola '$cola' procesada.";
 });
+
+Route::get('/detener-cola', function() {
+    Artisan::call('queue:restart');
+    return "Worker de la cola detenido.";
+});
+
+

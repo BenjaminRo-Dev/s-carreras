@@ -29,6 +29,12 @@ docker run -it --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4-management
     Usar la terminal:
         docker compose exec app composer install
     
+**Reverb**
+php artisan reverb:start
 
+Inicio rapido:
 
+php artisan serve --port=8080
+php artisan reverb:start --debug
+php artisan queue:work
 
