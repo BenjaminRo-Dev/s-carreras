@@ -2,60 +2,68 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GrupoEstudiante;
+use App\Services\GrupoEstudianteService;
 use Illuminate\Http\Request;
+use App\Services\JobQueueService;
 
 class GrupoEstudianteController extends Controller
 {
+    protected $jobQueueService;
+
+    public function __construct(JobQueueService $jobQueueService)
+    {
+        $this->jobQueueService = $jobQueueService;
+    }
+
     public function index()
     {
-        return GrupoEstudiante::with(['estudiante', 'grupo'])->get();
+        $jobId = $this->jobQueueService->enqueue(GrupoEstudianteService::class, 'mostrarTodos', null);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo todos los grupos-estudiantes'], 202);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nota' => 'nullable|numeric|min:0|max:100',
             'creditos' => 'required|integer|min:1',
             'estudiante_id' => 'required|exists:estudiantes,id',
             'grupo_id' => 'required|exists:grupos,id'
         ]);
 
-        return GrupoEstudiante::create($request->all());
+        $jobId = $this->jobQueueService->enqueue(GrupoEstudianteService::class, 'guardar', $validated);
+
+        return response()->json(['jobId' => $jobId, 'message' => 'Grupo-estudiante en proceso de creación'], 202);
     }
 
     public function show(string $id)
     {
-        return GrupoEstudiante::with(['estudiante', 'grupo'])->findOrFail($id);
+        $jobId = $this->jobQueueService->enqueue(GrupoEstudianteService::class, 'mostrar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo el grupo-estudiante'], 202);
     }
 
     public function update(Request $request, string $id)
     {
-        $GrupoEstudiante = GrupoEstudiante::findOrFail($id);
-
-        $request->validate([
+        $validated = $request->validate([
             'nota' => 'nullable|numeric|min:0|max:100',
             'creditos' => 'required|integer|min:1',
             'estudiante_id' => 'required|exists:estudiantes,id',
             'grupo_id' => 'required|exists:grupos,id'
         ]);
 
-        $GrupoEstudiante->update($request->all());
-        return $GrupoEstudiante;
+        $jobId = $this->jobQueueService->enqueue(GrupoEstudianteService::class, 'actualizar', [$id, $validated]);
+        return response()->json(['jobId' => $jobId, 'message' => 'Grupo-estudiante en proceso de actualización'], 202);
     }
 
     public function destroy(string $id)
     {
-        $GrupoEstudiante = GrupoEstudiante::findOrFail($id);
-        $GrupoEstudiante->delete();
-        return response()->noContent();
+        $jobId = $this->jobQueueService->enqueue(GrupoEstudianteService::class, 'eliminar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Grupo-estudiante en proceso de eliminación'], 202);
     }
 
     // Método adicional para obtener notas de un estudiante
     public function notasEstudiante(string $estudiante_id)
     {
-        return GrupoEstudiante::with(['estudiante', 'grupo', 'grupo.docente', 'grupo.materia', 'grupo.gestion'])
-            ->where('estudiante_id', $estudiante_id)
-            ->get();
+        $jobId = $this->jobQueueService->enqueue(GrupoEstudianteService::class, 'notasEstudiante', $estudiante_id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo notas del estudiante'], 202);
     }
 }

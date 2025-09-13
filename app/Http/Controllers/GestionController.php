@@ -2,48 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Gestion;
+use App\Services\GestionService;
 use Illuminate\Http\Request;
+use App\Services\JobQueueService;
 
 class GestionController extends Controller
 {
+    protected $jobQueueService;
+
+    public function __construct(JobQueueService $jobQueueService)
+    {
+        $this->jobQueueService = $jobQueueService;
+    }
+
     public function index()
     {
-        return Gestion::with(['inscripciones', 'grupos'])->get();
+        $jobId = $this->jobQueueService->enqueue(GestionService::class, 'mostrarTodos', null);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo todas las gestiones'], 202);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'año' => 'required|integer|min:2000|max:2100',
             'periodo' => 'required|integer|in:1,2'
         ]);
 
-        return Gestion::create($request->all());
+        $jobId = $this->jobQueueService->enqueue(GestionService::class, 'guardar', $validated);
+
+        return response()->json(['jobId' => $jobId, 'message' => 'Gestión en proceso de creación'], 202);
     }
 
     public function show(string $id)
     {
-        return Gestion::with(['inscripciones', 'grupos'])->findOrFail($id);
+        $jobId = $this->jobQueueService->enqueue(GestionService::class, 'mostrar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo la gestión'], 202);
     }
 
     public function update(Request $request, string $id)
     {
-        $gestion = Gestion::findOrFail($id);
-
-        $request->validate([
+        $validated = $request->validate([
             'año' => 'required|integer|min:2000|max:2100',
             'periodo' => 'required|integer|in:1,2'
         ]);
 
-        $gestion->update($request->all());
-        return $gestion;
+        $jobId = $this->jobQueueService->enqueue(GestionService::class, 'actualizar', [$id, $validated]);
+        return response()->json(['jobId' => $jobId, 'message' => 'Gestión en proceso de actualización'], 202);
     }
 
     public function destroy(string $id)
     {
-        $gestion = Gestion::findOrFail($id);
-        $gestion->delete();
-        return response()->noContent();
+        $jobId = $this->jobQueueService->enqueue(GestionService::class, 'eliminar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Gestión en proceso de eliminación'], 202);
     }
 }

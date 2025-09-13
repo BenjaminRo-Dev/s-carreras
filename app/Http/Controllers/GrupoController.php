@@ -2,61 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Grupo;
+use App\Services\GrupoService;
 use Illuminate\Http\Request;
+use App\Services\JobQueueService;
 
 class GrupoController extends Controller
 {
+    protected $jobQueueService;
+
+    public function __construct(JobQueueService $jobQueueService)
+    {
+        $this->jobQueueService = $jobQueueService;
+    }
+
     public function index()
     {
-        return Grupo::with(['materia', 'docente', 'gestion', 'horarios'])->get();
+        $jobId = $this->jobQueueService->enqueue(GrupoService::class, 'mostrarTodos', null);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo todos los grupos'], 202);
     }
 
     public function grupoConEstudiantes()
     {
-        return Grupo::with(['materia', 'docente', 'gestion', 'horarios','detallesInscripcion.inscripcion.estudiante'])->get();
+        $jobId = $this->jobQueueService->enqueue(GrupoService::class, 'grupoConEstudiantes', null);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo grupos con estudiantes'], 202);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'sigla' => 'required|string',
-            'nombre' => 'required|string',
-            'cupo' => 'required|string',
+            'cupo' => 'required|integer|min:1',
             'materia_id' => 'required|exists:materias,id',
             'docente_id' => 'required|exists:docentes,id',
             'gestion_id' => 'required|exists:gestiones,id'
         ]);
 
-        return Grupo::create($request->all());
+        $jobId = $this->jobQueueService->enqueue(GrupoService::class, 'guardar', $validated);
+
+        return response()->json(['jobId' => $jobId, 'message' => 'Grupo en proceso de creación'], 202);
     }
 
     public function show(string $id)
     {
-        return Grupo::with(['materia', 'docente', 'gestion', 'horarios',])->findOrFail($id);
+        $jobId = $this->jobQueueService->enqueue(GrupoService::class, 'mostrar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo el grupo'], 202);
     }
 
     public function update(Request $request, string $id)
     {
-        $grupo = Grupo::findOrFail($id);
-
-        $request->validate([
+        $validated = $request->validate([
             'sigla' => 'required|string',
-            'nombre' => 'required|string',
-            'cupo' => 'required|string',
+            'cupo' => 'required|integer|min:1',
             'materia_id' => 'required|exists:materias,id',
             'docente_id' => 'required|exists:docentes,id',
             'gestion_id' => 'required|exists:gestiones,id'
         ]);
 
-        $grupo->update($request->all());
-        return $grupo;
+        $jobId = $this->jobQueueService->enqueue(GrupoService::class, 'actualizar', [$id, $validated]);
+        return response()->json(['jobId' => $jobId, 'message' => 'Grupo en proceso de actualización'], 202);
     }
 
     public function destroy(string $id)
     {
-        $grupo = Grupo::findOrFail($id);
-        $grupo->delete();
-        return response()->noContent();
+        $jobId = $this->jobQueueService->enqueue(GrupoService::class, 'eliminar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Grupo en proceso de eliminación'], 202);
     }
 }

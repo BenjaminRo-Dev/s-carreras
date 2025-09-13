@@ -2,39 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\StoreJob;
-use App\Jobs\UpdateJob;
-use App\Jobs\DestroyJob;
-use App\Models\Carrera;
+use App\Services\CarreraService;
 use Illuminate\Http\Request;
+use App\Services\JobQueueService;
 
 class CarreraController extends Controller
 {
-    public function index()
+    protected $jobQueueService;
+
+    public function __construct(JobQueueService $jobQueueService)
     {
-        return Carrera::with('planesEstudio.materiaPlanes.materia')->paginate(1);
+        $this->jobQueueService = $jobQueueService;
     }
 
-    public function show($id)
+    public function index()
     {
-        return Carrera::with('planesEstudio.materiaPlanes.materia')->findOrFail($id);
+        $jobId = $this->jobQueueService->enqueue(CarreraService::class, 'mostrarTodos', null);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo todas las carreras'], 202);
     }
 
     public function store(Request $request)
     {
-        StoreJob::dispatch(Carrera::class, $request->all());
-        return response()->json(['message' => 'Carrera en proceso de creación'], 202);
+        $validated = $request->validate([
+            'codigo' => 'required|string',
+            'nombre' => 'required|string',
+            'facultad_id' => 'required|exists:facultades,id'
+        ]);
+
+        $jobId = $this->jobQueueService->enqueue(CarreraService::class, 'guardar', $validated);
+
+        return response()->json(['jobId' => $jobId, 'message' => 'Carrera en proceso de creación'], 202);
     }
 
-    public function update(Request $request, $id)
+    public function show(string $id)
     {
-        UpdateJob::dispatch(Carrera::class, $id, $request->all());
-        return response()->json(['message' => 'Carrera en proceso de actualización'], 202);
+        $jobId = $this->jobQueueService->enqueue(CarreraService::class, 'mostrar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo la carrera'], 202);
     }
 
-    public function destroy($id)
+    public function update(Request $request, string $id)
     {
-        DestroyJob::dispatch(Carrera::class, $id);
-        return response()->json(['message' => 'Carrera en proceso de eliminación'], 202);
+        $validated = $request->validate([
+            'codigo' => 'required|string',
+            'nombre' => 'required|string',
+            'facultad_id' => 'required|exists:facultades,id'
+        ]);
+
+        $jobId = $this->jobQueueService->enqueue(CarreraService::class, 'actualizar', [$id, $validated]);
+        return response()->json(['jobId' => $jobId, 'message' => 'Carrera en proceso de actualización'], 202);
+    }
+
+    public function destroy(string $id)
+    {
+        $jobId = $this->jobQueueService->enqueue(CarreraService::class, 'eliminar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Carrera en proceso de eliminación'], 202);
     }
 }

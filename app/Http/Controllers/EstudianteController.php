@@ -2,52 +2,61 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Estudiante;
+use App\Services\EstudianteService;
 use Illuminate\Http\Request;
+use App\Services\JobQueueService;
 
 class EstudianteController extends Controller
 {
+    protected $jobQueueService;
+
+    public function __construct(JobQueueService $jobQueueService)
+    {
+        $this->jobQueueService = $jobQueueService;
+    }
+
     public function index()
     {
-        return Estudiante::with(['inscripciones', 'materias', 'grupos'])->get();
+        $jobId = $this->jobQueueService->enqueue(EstudianteService::class, 'mostrarTodos', null);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo todos los estudiantes'], 202);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'registro' => 'required|string|unique:estudiantes',
             'nombre' => 'required|string',
             'email' => 'nullable|email|unique:estudiantes',
             'telefono' => 'nullable|string'
         ]);
 
-        return Estudiante::create($request->all());
+        $jobId = $this->jobQueueService->enqueue(EstudianteService::class, 'guardar', $validated);
+
+        return response()->json(['jobId' => $jobId, 'message' => 'Estudiante en proceso de creación'], 202);
     }
 
     public function show(string $id)
     {
-        return Estudiante::with(['inscripciones', 'materias', 'grupos'])->findOrFail($id);
+        $jobId = $this->jobQueueService->enqueue(EstudianteService::class, 'mostrar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo el estudiante'], 202);
     }
 
     public function update(Request $request, string $id)
     {
-        $estudiante = Estudiante::findOrFail($id);
-
-        $request->validate([
+        $validated = $request->validate([
             'registro' => 'required|string|unique:estudiantes,registro,' . $id,
             'nombre' => 'required|string',
             'email' => 'nullable|email|unique:estudiantes,email,' . $id,
             'telefono' => 'nullable|string'
         ]);
 
-        $estudiante->update($request->all());
-        return $estudiante;
+        $jobId = $this->jobQueueService->enqueue(EstudianteService::class, 'actualizar', [$id, $validated]);
+        return response()->json(['jobId' => $jobId, 'message' => 'Estudiante en proceso de actualización'], 202);
     }
 
     public function destroy(string $id)
     {
-        $estudiante = Estudiante::findOrFail($id);
-        $estudiante->delete();
-        return response()->noContent();
+        $jobId = $this->jobQueueService->enqueue(EstudianteService::class, 'eliminar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Estudiante en proceso de eliminación'], 202);
     }
 }

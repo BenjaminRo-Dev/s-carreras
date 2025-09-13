@@ -2,45 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Facultad;
+use App\Services\FacultadService;
 use Illuminate\Http\Request;
-use App\Jobs\StoreJob;
+use App\Services\JobQueueService;
 
 class FacultadController extends Controller
 {
-    public function index()
+    protected $jobQueueService;
+
+    public function __construct(JobQueueService $jobQueueService)
     {
-        return Facultad::with('carreras')->get();
+        $this->jobQueueService = $jobQueueService;
     }
 
-    public function show($id)
+    public function index()
     {
-        return Facultad::with('carreras')->findOrFail($id);
+        $jobId = $this->jobQueueService->enqueue(FacultadService::class, 'mostrarTodos', null);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo todas las facultades'], 202);
     }
 
     public function store(Request $request)
     {
-        // GuardarFacultadJob::dispatch($request->all());
-        // GuardarFacultadJob::dispatch($request->all())->onQueue('principal');
+        $validated = $request->validate([
+            'nombre' => 'required|string',
+            'abreviacion' => 'required|string'
+        ]);
 
-        StoreJob::dispatch(Facultad::class, $request->all());
+        $jobId = $this->jobQueueService->enqueue(FacultadService::class, 'guardar', $validated);
 
-        return response()->json(['message' => 'Facultad en proceso de creación'], 202);
+        return response()->json(['jobId' => $jobId, 'message' => 'Facultad en proceso de creación'], 202);
     }
 
-    public function update(Request $request, $id)
+    public function show(string $id)
     {
-
-        // CrudJob::dispatch(new Facultad(), UpdateAction::class, $request->all(), $id);
-        // CrudJob::dispatch(Facultad::class, 'update', $request->all(), $id);
-
-        return response()->json(['message' => 'Facultad en proceso de actualización'], 202);
-
+        $jobId = $this->jobQueueService->enqueue(FacultadService::class, 'mostrar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo la facultad'], 202);
     }
 
-    public function destroy($id)
+    public function update(Request $request, string $id)
     {
-        Facultad::destroy($id);
-        return response()->json(null, 204);
+        $validated = $request->validate([
+            'nombre' => 'required|string',
+            'abreviacion' => 'required|string'
+        ]);
+
+        $jobId = $this->jobQueueService->enqueue(FacultadService::class, 'actualizar', [$id, $validated]);
+        return response()->json(['jobId' => $jobId, 'message' => 'Facultad en proceso de actualización'], 202);
+    }
+
+    public function destroy(string $id)
+    {
+        $jobId = $this->jobQueueService->enqueue(FacultadService::class, 'eliminar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Facultad en proceso de eliminación'], 202);
     }
 }

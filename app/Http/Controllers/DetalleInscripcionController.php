@@ -2,50 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetalleInscripcion;
+use App\Services\DetalleInscripcionService;
 use Illuminate\Http\Request;
+use App\Services\JobQueueService;
 
 class DetalleInscripcionController extends Controller
 {
+    protected $jobQueueService;
+
+    public function __construct(JobQueueService $jobQueueService)
+    {
+        $this->jobQueueService = $jobQueueService;
+    }
+
     public function index()
     {
-        return DetalleInscripcion::with(['grupo', 'inscripcion'])->get();
+        $jobId = $this->jobQueueService->enqueue(DetalleInscripcionService::class, 'mostrarTodos', null);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo todos los detalles de inscripción'], 202);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'fecha' => 'required|date',
             'inscripcion_id' => 'required|exists:inscripciones,id',
             'grupo_id' => 'required|exists:grupos,id'
         ]);
 
-        return DetalleInscripcion::create($request->all());
+        $jobId = $this->jobQueueService->enqueue(DetalleInscripcionService::class, 'guardar', $validated);
+
+        return response()->json(['jobId' => $jobId, 'message' => 'Detalle de inscripción en proceso de creación'], 202);
     }
 
     public function show(string $id)
     {
-        return DetalleInscripcion::with(['grupo', 'inscripcion'])->findOrFail($id);
+        $jobId = $this->jobQueueService->enqueue(DetalleInscripcionService::class, 'mostrar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo el detalle de inscripción'], 202);
     }
 
     public function update(Request $request, string $id)
     {
-        $inscripcion = DetalleInscripcion::findOrFail($id);
-
-        $request->validate([
+        $validated = $request->validate([
             'fecha' => 'required|date',
             'inscripcion_id' => 'required|exists:inscripciones,id',
             'grupo_id' => 'required|exists:grupos,id'
         ]);
 
-        $inscripcion->update($request->all());
-        return $inscripcion;
+        $jobId = $this->jobQueueService->enqueue(DetalleInscripcionService::class, 'actualizar', [$id, $validated]);
+        return response()->json(['jobId' => $jobId, 'message' => 'Detalle de inscripción en proceso de actualización'], 202);
     }
 
     public function destroy(string $id)
     {
-        $inscripcion = DetalleInscripcion::findOrFail($id);
-        $inscripcion->delete();
-        return response()->noContent();
+        $jobId = $this->jobQueueService->enqueue(DetalleInscripcionService::class, 'eliminar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Detalle de inscripción en proceso de eliminación'], 202);
     }
 }

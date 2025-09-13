@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Horario;
+use App\Services\HorarioService;
 use Illuminate\Http\Request;
+use App\Services\JobQueueService;
 
 class HorarioController extends Controller
 {
+    protected $jobQueueService;
+
+    public function __construct(JobQueueService $jobQueueService)
+    {
+        $this->jobQueueService = $jobQueueService;
+    }
+
     public function index()
     {
-        return Horario::with(['grupo', 'aula', 'modulo'])->get();
+        $jobId = $this->jobQueueService->enqueue(HorarioService::class, 'mostrarTodos', null);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo todos los horarios'], 202);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'dia' => 'required|string|in:Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo',
             'hora_inicio' => 'required|date_format:H:i',
             'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
@@ -23,19 +32,20 @@ class HorarioController extends Controller
             'modulo_id' => 'required|exists:modulos,id'
         ]);
 
-        return Horario::create($request->all());
+        $jobId = $this->jobQueueService->enqueue(HorarioService::class, 'guardar', $validated);
+
+        return response()->json(['jobId' => $jobId, 'message' => 'Horario en proceso de creación'], 202);
     }
 
     public function show(string $id)
     {
-        return Horario::with(['grupo', 'aula', 'modulo'])->findOrFail($id);
+        $jobId = $this->jobQueueService->enqueue(HorarioService::class, 'mostrar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Obteniendo el horario'], 202);
     }
 
     public function update(Request $request, string $id)
     {
-        $horario = Horario::findOrFail($id);
-
-        $request->validate([
+        $validated = $request->validate([
             'dia' => 'required|string|in:Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo',
             'hora_inicio' => 'required|date_format:H:i',
             'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
@@ -44,14 +54,13 @@ class HorarioController extends Controller
             'modulo_id' => 'required|exists:modulos,id'
         ]);
 
-        $horario->update($request->all());
-        return $horario;
+        $jobId = $this->jobQueueService->enqueue(HorarioService::class, 'actualizar', [$id, $validated]);
+        return response()->json(['jobId' => $jobId, 'message' => 'Horario en proceso de actualización'], 202);
     }
 
     public function destroy(string $id)
     {
-        $horario = Horario::findOrFail($id);
-        $horario->delete();
-        return response()->noContent();
+        $jobId = $this->jobQueueService->enqueue(HorarioService::class, 'eliminar', $id);
+        return response()->json(['jobId' => $jobId, 'message' => 'Horario en proceso de eliminación'], 202);
     }
 }

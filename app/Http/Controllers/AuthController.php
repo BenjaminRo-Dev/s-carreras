@@ -11,6 +11,17 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/auth/login",
+     *     summary="Logear al estudiante",
+     *     tags={"Estudiante"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Registro de estudiantes"
+     *     )
+     * )
+     */
     public function login(Request $request)
     {
         $request->validate([
