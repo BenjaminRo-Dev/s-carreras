@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 use function Illuminate\Log\log;
-
+//OBSOLETO: Usar CrudJob
 class StoreJob implements ShouldQueue
 {
     use Queueable, Dispatchable;

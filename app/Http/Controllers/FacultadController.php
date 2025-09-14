@@ -2,40 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\DestroyJob;
-use App\Models\Facultad;
+use App\Services\ColaAction;
+use App\Services\FacultadService;
 use Illuminate\Http\Request;
-use App\Jobs\StoreJob;
-use App\Jobs\UpdateJob;
 
 class FacultadController extends Controller
 {
+    protected $colaAction;
+    public function __construct(ColaAction $colaAction)
+    {
+        $this->colaAction = $colaAction;
+    }
+
     public function index()
     {
-        return Facultad::with('carreras')->get();
+        return $this->colaAction->encolar(FacultadService::class, 'mostrarTodos');
     }
 
     public function show($id)
     {
-        return Facultad::with('carreras')->findOrFail($id);
+        return $this->colaAction->encolar(FacultadService::class, 'mostrar', $id);
     }
 
     public function store(Request $request)
     {
-        StoreJob::dispatch(Facultad::class, $request->all())->onQueue($request->header('Cola', 'default'));
-        return response()->json(['message' => 'Facultad en proceso de creación'], 202);
+        $datos = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'abreviacion' => 'required|string|max:255',
+        ]);
+
+        return $this->colaAction->encolar(FacultadService::class, 'guardar', $datos);
     }
 
     public function update(Request $request, $id)
     {
-        UpdateJob::dispatch(Facultad::class, $id, $request->all());
-        return response()->json(['message' => 'Facultad en proceso de actualización'], 202);
+        $datos = $request->validate([
+            'nombre' => 'sometimes|required|string|max:255',
+            'abreviacion' => 'sometimes|required|string|max:255',
+        ]);
 
+        return $this->colaAction->encolar(FacultadService::class, 'actualizar', $datos, $id);
     }
 
     public function destroy($id)
     {
-        DestroyJob::dispatch(Facultad::class, $id);
-        return response()->json(['message' => 'Facultad en proceso de eliminación'], 202);
+        return $this->colaAction->encolar(FacultadService::class, 'eliminar', $id);
     }
+
 }

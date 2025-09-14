@@ -9,16 +9,16 @@ class EstadoController extends Controller
 {
     public function consultarEstado($uuid)
     {
-        $status = Cache::get("t:$uuid");
+        $estado = Cache::get("t:$uuid");
 
-        if (!$status) {
+        if (!$estado) {
             return response()->json([
-                'status' => 'procesado'
+                'estado' => 'Transacción Procesada'
             ]);
         }
 
         return response()->json([
-            'status' => $status
+            'estado' => $estado
         ]);
     }
 }
