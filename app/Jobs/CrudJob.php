@@ -33,17 +33,26 @@ class CrudJob implements ShouldQueue
 
         if (is_array($this->params)) {
             $respuesta = call_user_func_array([$servicio, $this->metodo], $this->params);
-
         } else {
             $respuesta = $servicio->{$this->metodo}();
         }
-        Cache::put("t:$this->uuid", $respuesta, 1800);
+        
+        Cache::put("t:$this->uuid", [
+            'status'       => 'procesado',
+            'result'       => $respuesta,
+            'processed_at' => now()->toDateTimeString(),
+        ], now()->addMinutes(30));
         // broadcast(new JobFinalizado($this->datos));
     }
 
     public function failed(\Throwable $exception): void
     {
-        Cache::put("t:$this->uuid", "fallido", 3600);
+        Cache::put("t:$this->uuid", [
+            'status'       => 'fallido',
+            'error'        => $exception->getMessage(),
+            'failed_at'    => now()->toDateTimeString(),
+        ], now()->addMinutes(30));
+
         log()->error("Error al ejecutar el job '{$this->serviceClass}::{$this->metodo}': " . $exception->getMessage());
     }
 }
