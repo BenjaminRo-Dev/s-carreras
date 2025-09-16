@@ -9,10 +9,13 @@ use Illuminate\Http\Request;
 class CarreraController extends Controller
 {
     protected $colaAction;
+    protected $service;
 
-    public function __construct(ColaAction $colaAction)
+    public function __construct(ColaAction $colaAction, CarreraService $service)
     {
+        parent::__construct(); 
         $this->colaAction = $colaAction;
+        $this->service = $service;
     }
 
     public function index()
@@ -33,7 +36,9 @@ class CarreraController extends Controller
             'facultad_id' => 'required|integer',
         ]);
 
-        return $this->colaAction->encolar(CarreraService::class, 'guardar', $datos);
+        return $this->usarCola
+            ? $this->colaAction->encolar(CarreraService::class, 'guardar', $datos)
+            : $this->service->guardar($datos);
     }
 
     public function update(Request $request, $id)

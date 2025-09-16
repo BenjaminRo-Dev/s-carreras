@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\DestroyJob;
-use App\Jobs\StoreJob;
-use App\Jobs\UpdateJob;
-use App\Models\Estudiante;
 use App\Services\ColaAction;
 use App\Services\EstudianteService;
 use Illuminate\Http\Request;
