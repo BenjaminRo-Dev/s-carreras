@@ -14,7 +14,7 @@ class ColaAction
 
         CrudJob::dispatch($serviceClass, $metodo, $params, $uuid);
 
-        Cache::put("t:$uuid", "procesando", 60);
+        Cache::put("t:$uuid", "procesando", config('cache.tiempo_cache'));
 
         return response()->json([
             'message' => 'Operacion en proceso',
