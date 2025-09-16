@@ -56,3 +56,7 @@ Redis:
 
 RabbitMQ:
     http://localhost:15672
+
+Horizon:
+    sail artisan horizon
+    http://localhost/horizon/

@@ -93,7 +93,7 @@ return [
                 ],
             ],
             //Si se va a usar laravel horizon, poner "horizon"
-            // 'worker' => env('RABBITMQ_WORKER', 'default'),
+            'worker' => env('RABBITMQ_WORKER', 'horizon'),
         ],
 
 
