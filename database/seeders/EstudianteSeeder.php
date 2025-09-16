@@ -35,7 +35,7 @@ class EstudianteSeeder extends Seeder
                 'email' => $estudiante['email'],
                 'telefono' => $estudiante['telefono'],
                 'plan_estudio_id' => $estudiante['plan_estudio_id'],
-                'usuario_id' => $user->id,
+                'user_id' => $user->id,
             ]);
         }
     }

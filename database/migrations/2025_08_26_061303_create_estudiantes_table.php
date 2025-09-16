@@ -14,9 +14,11 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('email')->unique()->nullable();
             $table->string('telefono')->nullable();
-            $table->foreignId('usuario_id')->nullable()->constrained('users')->onDelete('cascade');
+
+            // columna para relación con users
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->unique();
+
             $table->foreignId('plan_estudio_id')->constrained('planes_estudio')->onDelete('cascade');
-            $table->unique('usuario_id');
             $table->timestamps();
         });
     }

@@ -2,31 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Carrera;
-use App\Services\CrudService;
+use App\Services\CarreraService;
+use App\Services\ColaAction;
 use Illuminate\Http\Request;
 
 class CarreraController extends Controller
 {
+    protected $colaAction;
 
-    // public function index()
-    // {
-    //     // return Carrera::with('planesEstudio.materiaPlanes.materia')->paginate(1);
-    //     $uuid = (string) Str::uuid();
-    //     GetAllJob::dispatch(Carrera::class, $uuid);
-    //     Cache::put("t:$uuid", "en_proceso", 1800);
-    //     return response()->json([
-    //         'message' => 'Carreras en proceso de obtención',
-    //         'url' => url("api/estado/$uuid"),
-    //         'transaction_id' => $uuid,
-    //         'status' => 'en_proceso'
-    //     ], 202);
+    public function __construct(ColaAction $colaAction)
+    {
+        $this->colaAction = $colaAction;
+    }
 
-    // }
+    public function index()
+    {
+        return $this->colaAction->encolar(CarreraService::class, 'mostrarTodos');
+    }
 
     public function show($id)
     {
-        return Carrera::with('planesEstudio.materiaPlanes.materia')->findOrFail($id);
+        return $this->colaAction->encolar(CarreraService::class, 'mostrar', $id);
     }
 
     public function store(Request $request)
@@ -34,10 +30,10 @@ class CarreraController extends Controller
         $datos = $request->validate([
             'codigo' => 'required|string|max:255',
             'nombre' => 'required|string|max:255',
-            'facultad_id' => 'required|integer|',
+            'facultad_id' => 'required|integer',
         ]);
 
-        return app(CrudService::class)->store(Carrera::class, $datos);
+        return $this->colaAction->encolar(CarreraService::class, 'guardar', $datos);
     }
 
     public function update(Request $request, $id)
@@ -45,14 +41,14 @@ class CarreraController extends Controller
         $datos = $request->validate([
             'codigo' => 'sometimes|required|string|max:255',
             'nombre' => 'sometimes|required|string|max:255',
-            'facultad_id' => 'sometimes|required|integer|',
+            'facultad_id' => 'sometimes|required|integer',
         ]);
 
-        return app(CrudService::class)->update(Carrera::class, $id, $datos);
+        return $this->colaAction->encolar(CarreraService::class, 'actualizar', $datos, $id);
     }
 
     public function destroy($id)
     {
-        return app(CrudService::class)->destroy(Carrera::class, $id);
+        return $this->colaAction->encolar(CarreraService::class, 'eliminar', $id);
     }
 }

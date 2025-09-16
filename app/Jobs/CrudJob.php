@@ -37,13 +37,13 @@ class CrudJob implements ShouldQueue
         } else {
             $respuesta = $servicio->{$this->metodo}();
         }
-        Cache::put("t:$this->uuid", $respuesta, 1800);
+        Cache::put("t:$this->uuid", $respuesta, 30);
         // broadcast(new JobFinalizado($this->datos));
     }
 
     public function failed(\Throwable $exception): void
     {
-        Cache::put("t:$this->uuid", "fallido", 3600);
+        Cache::put("t:$this->uuid", "fallido: \n" . $exception->getMessage(), 30);
         log()->error("Error al ejecutar el job '{$this->serviceClass}::{$this->metodo}': " . $exception->getMessage());
     }
 }

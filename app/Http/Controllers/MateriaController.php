@@ -2,48 +2,63 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\DestroyJob;
-use App\Jobs\StoreJob;
-use App\Jobs\UpdateJob;
-use App\Models\Carrera;
-use App\Models\Materia;
+use App\Services\ColaAction;
+use App\Services\MateriaService;
 use Illuminate\Http\Request;
 
 class MateriaController extends Controller
 {
 
-    public function obtenerMateriasUltimoPlan(Carrera $carrera)
+    protected $colaAction;
+
+    public function __construct(ColaAction $colaAction)
     {
-        $ultimoPlan = $carrera->planesEstudio()->orderBy('created_at', 'desc')->first();
-        $materias = $ultimoPlan->materias;
-        return $materias;
+        $this->colaAction = $colaAction;
     }
 
     public function index()
     {
-        return Materia::with(['nivel', 'tipo', 'prerequisitos', 'esPrerequisitoDe', 'materiaPlanes'])->get();
-    }
-
-    public function store(Request $request)
-    {
-        StoreJob::dispatch(Materia::class, $request->all());
-        return response()->json(['message' => 'Materia en proceso de creación'], 202);
+        return $this->colaAction->encolar(MateriaService::class, 'mostrarTodos');
     }
 
     public function show(string $id)
     {
-        return Materia::findOrFail($id);
+        return $this->colaAction->encolar(MateriaService::class, 'mostrar', $id);
+    }
+
+    public function store(Request $request)
+    {
+        $datos = $request->validate([
+            'sigla' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255',
+            'creditos' => 'required|integer',
+            'nivel_id' => 'required|integer',
+            'tipo_id' => 'required|integer',
+            'prerequisitos' => 'sometimes|array',
+            'prerequisitos.*' => 'integer|distinct',
+        ]);
+
+        return $this->colaAction->encolar(MateriaService::class, 'guardar', $datos);
     }
 
     public function update(Request $request, string $id)
     {
-        UpdateJob::dispatch(Materia::class, $id, $request->all());
-        return response()->json(['message' => 'Materia en proceso de actualización'], 202);
+        $datos = $request->validate([
+            'sigla' => 'sometimes|string|max:255',
+            'nombre' => 'sometimes|string|max:255',
+            'creditos' => 'sometimes|integer',
+            'nivel_id' => 'sometimes|integer',
+            'tipo_id' => 'sometimes|integer',
+            'prerequisitos' => 'sometimes|array',
+            'prerequisitos.*' => 'integer|distinct',
+        ]);
+
+        return $this->colaAction->encolar(MateriaService::class, 'actualizar', $datos, $id);
     }
 
     public function destroy(string $id)
     {
-        DestroyJob::dispatch(Materia::class, $id);
-        return response()->json(['message' => 'Materia en proceso de eliminación'], 202);
+        return $this->colaAction->encolar(MateriaService::class, 'eliminar', $id);
     }
+
 }

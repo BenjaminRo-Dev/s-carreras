@@ -2,61 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Grupo;
+use App\Services\ColaAction;
+use App\Services\GrupoService;
 use Illuminate\Http\Request;
 
 class GrupoController extends Controller
 {
-    public function index()
+    protected $colaAction;
+
+    public function __construct(ColaAction $colaAction)
     {
-        return Grupo::with(['materia', 'docente', 'gestion', 'horarios'])->get();
+        $this->colaAction = $colaAction;
     }
 
-    public function grupoConEstudiantes()
+    public function index()
     {
-        return Grupo::with(['materia', 'docente', 'gestion', 'horarios','detallesInscripcion.inscripcion.estudiante'])->get();
+        return $this->colaAction->encolar(GrupoService::class, 'mostrarTodos');
+    }
+
+    public function show($id)
+    {
+        return $this->colaAction->encolar(GrupoService::class, 'mostrar', $id);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'sigla' => 'required|string',
-            'nombre' => 'required|string',
-            'cupo' => 'required|string',
-            'materia_id' => 'required|exists:materias,id',
-            'docente_id' => 'required|exists:docentes,id',
-            'gestion_id' => 'required|exists:gestiones,id'
+        $datos = $request->validate([
+            'sigla' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255',
+            'cupo' => 'required|integer|min:1',
+            'materia_id' => 'required|integer',
+            'docente_id' => 'required|integer',
+            'gestion_id' => 'required|integer',
         ]);
 
-        return Grupo::create($request->all());
+        return $this->colaAction->encolar(GrupoService::class, 'guardar', $datos);
     }
 
-    public function show(string $id)
+    public function update(Request $request, $id)
     {
-        return Grupo::with(['materia', 'docente', 'gestion', 'horarios',])->findOrFail($id);
-    }
-
-    public function update(Request $request, string $id)
-    {
-        $grupo = Grupo::findOrFail($id);
-
-        $request->validate([
-            'sigla' => 'required|string',
-            'nombre' => 'required|string',
-            'cupo' => 'required|string',
-            'materia_id' => 'required|exists:materias,id',
-            'docente_id' => 'required|exists:docentes,id',
-            'gestion_id' => 'required|exists:gestiones,id'
+        $datos = $request->validate([
+            'sigla' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255',
+            'cupo' => 'required|integer|min:1',
+            'materia_id' => 'required|integer',
+            'docente_id' => 'required|integer',
+            'gestion_id' => 'required|integer',
         ]);
 
-        $grupo->update($request->all());
-        return $grupo;
+        return $this->colaAction->encolar(GrupoService::class, 'actualizar', $datos, $id);
     }
 
     public function destroy(string $id)
     {
-        $grupo = Grupo::findOrFail($id);
-        $grupo->delete();
-        return response()->noContent();
+        return $this->colaAction->encolar(GrupoService::class, 'eliminar', $id);
     }
 }

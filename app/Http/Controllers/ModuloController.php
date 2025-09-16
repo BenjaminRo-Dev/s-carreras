@@ -6,47 +6,51 @@ use App\Jobs\DestroyJob;
 use App\Jobs\StoreJob;
 use App\Jobs\UpdateJob;
 use App\Models\Modulo;
+use App\Services\ColaAction;
+use App\Services\ModuloService;
 use Illuminate\Http\Request;
 
 class ModuloController extends Controller
 {
+    protected $colaAction;
+
+    public function __construct(ColaAction $colaAction)
+    {
+        $this->colaAction = $colaAction;
+    }
+    
     public function index()
     {
-        return Modulo::with('horarios')->get();
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'numero' => 'required|string',
-            'hora_inicio' => 'required|date_format:H:i',
-            'hora_fin' => 'required|date_format:H:i|after:hora_inicio'
-        ]);
-
-        StoreJob::dispatch(Modulo::class, $request->all())->onQueue($request->header('Cola', 'default'));
-        return response()->json(['message' => 'Módulo en proceso de creación'], 202);
+        return $this->colaAction->encolar(ModuloService::class, 'mostrarTodos');
     }
 
     public function show(string $id)
     {
-        return Modulo::with('horarios')->findOrFail($id);
+        return $this->colaAction->encolar(ModuloService::class, 'mostrar', $id);
+    }
+
+    public function store(Request $request)
+    {
+        $datos = $request->validate([
+            'numero' => 'required|string',
+            'cant_aulas' => 'required|integer|min:1|max:50',
+        ]);
+
+        return $this->colaAction->encolar(ModuloService::class, 'guardar', $datos);
     }
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
+        $datos = $request->validate([
             'numero' => 'required|string',
-            'hora_inicio' => 'required|date_format:H:i',
-            'hora_fin' => 'required|date_format:H:i|after:hora_inicio'
+            'cant_aulas' => 'required|integer|min:1|max:50',
         ]);
 
-        UpdateJob::dispatch(Modulo::class, $id, $request->all());
-        return response()->json(['message' => 'Módulo en proceso de actualización'], 202);
+        return $this->colaAction->encolar(ModuloService::class, 'actualizar', $datos, $id);
     }
 
     public function destroy(string $id)
     {
-        DestroyJob::dispatch(Modulo::class, $id);
-        return response()->json(['message' => 'Módulo en proceso de eliminación'], 202);
+        return $this->colaAction->encolar(ModuloService::class, 'eliminar', $id);
     }
 }

@@ -2,28 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\StoreInscripcionJob;
-use App\Models\DetalleInscripcion;
-use App\Models\Inscripcion;
+use App\Services\ColaAction;
+use App\Services\InscripcionService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 
 class InscripcionController extends Controller
 {
+    protected $colaAction;
+
+    public function __construct(ColaAction $colaAction)
+    {
+        $this->colaAction = $colaAction;
+    }
+
     public function index()
     {
-        return Inscripcion::with([
-            'estudiante',
-            'gestion',
-            'detalle',
-            'detalle.grupo',
-            'detalle.grupo.materia',
-            'detalle.grupo.docente',
-            'detalle.grupo.horarios',
-            'detalle.grupo.horarios.modulo',
-            'detalle.grupo.horarios.aula',
-        ])->get();
+        return $this->colaAction->encolar(InscripcionService::class, 'mostrarTodos');
     }
 
     public function store(Request $request)
@@ -36,52 +30,29 @@ class InscripcionController extends Controller
             'grupos.*'      => ['integer'],
         ]);
 
-        $uuid = (string) Str::uuid();
-        StoreInscripcionJob::dispatch($datos, $uuid);
-        Cache::put("t:$uuid", "en_proceso", 1800);
-
-        return response()->json([
-            'message' => "Inscripción en proceso",
-            'url' => url("api/estado/$uuid"),
-            'transaction_id' => $uuid,
-            'status' => 'en_proceso'
-        ], 202);
+        return $this->colaAction->encolar(InscripcionService::class, 'guardar', $datos);
     }
-
 
     public function show(string $id)
     {
-        return Inscripcion::with([
-            'estudiante',
-            'gestion',
-            'detalle',
-            'detalle.grupo',
-            'detalle.grupo.materia',
-            'detalle.grupo.docente',
-            'detalle.grupo.horarios',
-            'detalle.grupo.horarios.modulo',
-            'detalle.grupo.horarios.aula',
-        ])->findOrFail($id);
+        return $this->colaAction->encolar(InscripcionService::class, 'mostrar', $id);
     }
 
     public function update(Request $request, string $id)
     {
-        $inscripcion = Inscripcion::findOrFail($id);
-
-        $request->validate([
-            'fecha' => 'required|date',
-            'estudiante_id' => 'required|exists:estudiantes,id',
-            'gestion_id' => 'required|exists:gestiones,id'
+        $datos = $request->validate([
+            'estudiante_id' => ['sometimes', 'required', 'integer'],
+            'gestion_id'    => ['sometimes', 'required', 'integer'],
+            'fecha'         => ['sometimes', 'required', 'date'],
+            'grupos'        => ['sometimes', 'required', 'array', 'min:1'],
+            'grupos.*'      => ['integer'],
         ]);
 
-        $inscripcion->update($request->all());
-        return $inscripcion;
+        return $this->colaAction->encolar(InscripcionService::class, 'actualizar', $datos, $id);
     }
 
     public function destroy(string $id)
     {
-        $inscripcion = Inscripcion::findOrFail($id);
-        $inscripcion->delete();
-        return response()->noContent();
+        return $this->colaAction->encolar(InscripcionService::class, 'eliminar', $id);
     }
 }

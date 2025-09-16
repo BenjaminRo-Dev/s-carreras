@@ -26,11 +26,12 @@ Route::get('/hola', function () {
     return response()->json(['message' => 'Hola tópicos Postgres']);
 });
 
-Route::get('/plan-estudio/{carrera}', [PlanEstudioController::class, 'getMaterias']);
+// Route::get('/plan-estudio/{carrera}', [PlanEstudioController::class, 'getMaterias']);
 Route::get('/materias', [MateriaController::class, 'index']);
 
 Route::apiResource('facultades', FacultadController::class)->parameters(['facultades' => 'facultad']);
 Route::apiResource('carreras', CarreraController::class);
+Route::apiResource('planes-estudio', PlanEstudioController::class);
 
 // Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);

@@ -37,6 +37,7 @@ Inicio rapido:
 php artisan serve --port=8080
 php artisan reverb:start --debug
 php artisan queue:work
+php artisan queue:listen
 
 vendor/bin/sail up -d
 
@@ -47,3 +48,11 @@ vendor/bin/sail up -d
     docker exec -it s-carreras-redis-1 redis-cli
     select 1
     keys * 
+
+
+**Interfaces**
+Redis:
+    http://localhost:8081
+
+RabbitMQ:
+    http://localhost:15672

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Estudiante extends Model
 {
     protected $table = 'estudiantes';
-    protected $fillable = ['registro', 'nombre', 'email', 'telefono'];
+    protected $fillable = ['registro', 'nombre', 'email', 'telefono', 'user_id', 'plan_estudio_id'];
 
     //Un estudiante esta en 1 plan de estudio:
     public function planEstudio()
@@ -29,6 +29,6 @@ class Estudiante extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'usuario_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

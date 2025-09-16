@@ -32,7 +32,7 @@ class FacultadService
     {
         $facultad = Facultad::findOrFail($id);
         $facultad->delete();
-        return response()->json(['message' => 'Facultad eliminada']);
+        return $facultad->nombre . " eliminada";
     }
 
 }

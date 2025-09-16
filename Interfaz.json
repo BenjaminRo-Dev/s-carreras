@@ -1,0 +1,76 @@
+[
+    {
+        "url": "/api/facultades",
+        "method": "GET"
+    },
+    {
+        "url": "/api/facultades",
+        "method": "POST",
+        "body": {
+            "nombre": "string",
+            "abreviacion": "FM"
+        }
+    },
+    {
+        "url": "/api/facultades/33366",
+        "method": "PUT",
+        "body": {
+            "nombre": "string",
+            "abreviacion": "FVM"
+        }
+    },
+    {
+        "url": "/api/carreras",
+        "method": "GET"
+    },
+    {
+        "url": "/api/carreras",
+        "method": "POST",
+        "body": {
+            "codigo": "ASD123",
+            "nombre": "string",
+            "facultad_id": 1
+        }
+    },
+    {
+        "url": "/api/carreras/2",
+        "method": "PUT",
+        "body": {
+            "codigo": "ASD123",
+            "nombre": "string",
+            "facultad_id": 1
+        }
+    },
+    {
+        "url": "/api/carreras/6",
+        "method": "GET"
+    },
+    {
+        "url": "/api/planes-estudio",
+        "method": "GET"
+    },
+    {
+        "url": "/api/planes-estudio",
+        "method": "POST",
+        "body": {
+            "codigo": "string",
+            "cantidad_semestres": 10,
+            "vigente": 0,
+            "carrera_id": 2
+        }
+    },
+    {
+        "url": "/api/planes-estudio/2",
+        "method": "PUT",
+        "body": {
+            "codigo": "string",
+            "cantidad_semestres" : 10,
+            "vigente": 0,
+            "carrera_id": 2
+        }
+    },
+    {
+        "url": "/api/planes-estudio/2",
+        "method": "GET"
+    }
+]

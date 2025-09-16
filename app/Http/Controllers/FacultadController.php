@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 class FacultadController extends Controller
 {
     protected $colaAction;
+    
     public function __construct(ColaAction $colaAction)
     {
         $this->colaAction = $colaAction;
