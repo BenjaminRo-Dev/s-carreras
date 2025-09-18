@@ -12,7 +12,7 @@
         }
     },
     {
-        "url": "/api/facultades/33366",
+        "url": "/api/facultades/2",
         "method": "PUT",
         "body": {
             "nombre": "string",

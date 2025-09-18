@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\DestroyJob;
-use App\Jobs\StoreJob;
-use App\Jobs\UpdateJob;
-use App\Models\Modulo;
 use App\Services\ColaAction;
 use App\Services\ModuloService;
 use Illuminate\Http\Request;
@@ -13,10 +9,13 @@ use Illuminate\Http\Request;
 class ModuloController extends Controller
 {
     protected $colaAction;
+    protected $service;
 
-    public function __construct(ColaAction $colaAction)
+    public function __construct(ColaAction $colaAction, ModuloService $service)
     {
+        parent::__construct();
         $this->colaAction = $colaAction;
+        $this->service = $service;
     }
     
     public function index()
@@ -36,7 +35,9 @@ class ModuloController extends Controller
             'cant_aulas' => 'required|integer|min:1|max:50',
         ]);
 
-        return $this->colaAction->encolar(ModuloService::class, 'guardar', $datos);
+        return $this->usarCola
+            ? $this->colaAction->encolar(ModuloService::class, 'guardar', $datos)
+            : $this->service->guardar($datos);
     }
 
     public function update(Request $request, string $id)

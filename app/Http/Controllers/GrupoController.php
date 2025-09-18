@@ -9,10 +9,13 @@ use Illuminate\Http\Request;
 class GrupoController extends Controller
 {
     protected $colaAction;
+    protected $service;
 
-    public function __construct(ColaAction $colaAction)
+    public function __construct(ColaAction $colaAction, GrupoService $service)
     {
+        parent::__construct();
         $this->colaAction = $colaAction;
+        $this->service = $service;
     }
 
     public function index()
@@ -36,7 +39,9 @@ class GrupoController extends Controller
             'gestion_id' => 'required|integer',
         ]);
 
-        return $this->colaAction->encolar(GrupoService::class, 'guardar', $datos);
+        return $this->usarCola
+            ? $this->colaAction->encolar(GrupoService::class, 'guardar', $datos)
+            : $this->service->guardar($datos);
     }
 
     public function update(Request $request, $id)

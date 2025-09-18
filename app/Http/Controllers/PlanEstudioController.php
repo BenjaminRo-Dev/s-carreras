@@ -9,10 +9,13 @@ use Illuminate\Http\Request;
 class PlanEstudioController extends Controller
 {
     protected $colaAction;
+    protected $service;
 
-    public function __construct(ColaAction $colaAction)
+    public function __construct(ColaAction $colaAction, PlanEstudioService $service)
     {
+        parent::__construct();
         $this->colaAction = $colaAction;
+        $this->service = $service;
     }
 
     public function index()
@@ -34,7 +37,9 @@ class PlanEstudioController extends Controller
             'carrera_id' => 'required|integer',
         ]);
 
-        return $this->colaAction->encolar(PlanEstudioService::class, 'guardar', $datos);
+        return $this->usarCola
+            ? $this->colaAction->encolar(PlanEstudioService::class, 'guardar', $datos)
+            : $this->service->guardar($datos);
     }
 
     public function update(Request $request, $id)

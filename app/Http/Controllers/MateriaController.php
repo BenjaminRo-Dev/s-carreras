@@ -10,10 +10,13 @@ class MateriaController extends Controller
 {
 
     protected $colaAction;
+    protected $service;
 
-    public function __construct(ColaAction $colaAction)
+    public function __construct(ColaAction $colaAction, MateriaService $service)
     {
+        parent::__construct();
         $this->colaAction = $colaAction;
+        $this->service = $service;
     }
 
     public function index()
@@ -38,7 +41,9 @@ class MateriaController extends Controller
             'prerequisitos.*' => 'integer|distinct',
         ]);
 
-        return $this->colaAction->encolar(MateriaService::class, 'guardar', $datos);
+        return $this->usarCola
+            ? $this->colaAction->encolar(MateriaService::class, 'guardar', $datos)
+            : $this->service->guardar($datos);
     }
 
     public function update(Request $request, string $id)
