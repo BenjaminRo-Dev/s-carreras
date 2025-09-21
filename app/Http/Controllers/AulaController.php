@@ -8,6 +8,7 @@ use App\Jobs\UpdateJob;
 use App\Models\Aula;
 use Illuminate\Http\Request;
 
+//TODO: ACTUALIZAR A LA NUEVA COLA
 class AulaController extends Controller
 {
     public function index()

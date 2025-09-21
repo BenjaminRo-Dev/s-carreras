@@ -60,3 +60,6 @@ RabbitMQ:
 Horizon:
     sail artisan horizon
     http://localhost/horizon/
+
+
+sail artisan queue:listen --queue=123abc

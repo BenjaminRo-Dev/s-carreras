@@ -20,12 +20,14 @@ class CarreraController extends Controller
 
     public function index()
     {
-        return $this->colaAction->encolar(CarreraService::class, 'mostrarTodos');
+        $cola = request()->header('cola', "default");
+        return $this->colaAction->encolar(CarreraService::class, 'mostrarTodos', $cola);
     }
 
     public function show($id)
     {
-        return $this->colaAction->encolar(CarreraService::class, 'mostrar', $id);
+        $cola = request()->header('cola', "default");
+        return $this->colaAction->encolar(CarreraService::class, 'mostrar', $cola, $id);
     }
 
     public function store(Request $request)
@@ -36,8 +38,15 @@ class CarreraController extends Controller
             'facultad_id' => 'required|integer',
         ]);
 
+        $cola = $request->header('cola', "default");
+        $lote = $request->header('lote', "false");
+
+        if($lote == 'true'){
+            return $this->colaAction->encolarLote(CarreraService::class, 'guardar', $cola, $datos);
+        }
+
         return $this->usarCola
-            ? $this->colaAction->encolar(CarreraService::class, 'guardar', $datos)
+            ? $this->colaAction->encolar(CarreraService::class, 'guardar', $cola, $datos)
             : $this->service->guardar($datos);
     }
 
@@ -48,12 +57,15 @@ class CarreraController extends Controller
             'nombre' => 'sometimes|required|string|max:255',
             'facultad_id' => 'sometimes|required|integer',
         ]);
+        $cola = request()->header('cola', "default");
 
-        return $this->colaAction->encolar(CarreraService::class, 'actualizar', $datos, $id);
+        return $this->colaAction->encolar(CarreraService::class, 'actualizar', $cola, $datos, $id);
     }
 
     public function destroy($id)
     {
-        return $this->colaAction->encolar(CarreraService::class, 'eliminar', $id);
+        $cola = request()->header('cola', "default");
+
+        return $this->colaAction->encolar(CarreraService::class, 'eliminar', $cola, $id);
     }
 }
