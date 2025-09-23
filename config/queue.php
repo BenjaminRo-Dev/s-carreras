@@ -93,6 +93,13 @@ return [
                     'passphrase' => env('RABBITMQ_SSL_PASSPHRASE', null),
                 ],
             ],
+            // Configuración para RabbitMQ Management API
+            'management' => [
+                'host' => env('RABBITMQ_MANAGEMENT_HOST', 'http://localhost:15672'),
+                'user' => env('RABBITMQ_MANAGEMENT_USER', 'guest'),
+                'password' => env('RABBITMQ_MANAGEMENT_PASSWORD', 'guest'),
+            ],
+            'queues' => env('RABBITMQ_QUEUES', 'default,santacruz'),
             //Si se va a usar laravel horizon, poner "horizon"
             // 'worker' => env('RABBITMQ_WORKER', 'horizon'),
         ],

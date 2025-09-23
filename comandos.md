@@ -63,3 +63,35 @@ Horizon:
 
 
 sail artisan queue:listen --queue=123abc
+
+
+**Docker**
+Ingresar a un contenedor:
+docker exec -it nombre-contenedor bash
+    docker exec -it s-carreras-laravel.test-1 bash
+
+
+    Reconstruir un contenedor:
+    sail down -v
+    sail build --no-cache worker
+    sail up -d
+
+
+
+**Supervisor**
+Entrar en el contenedor:
+    sail root-shell
+
+Detener todas las instncias del proceso supervisord:
+    pkill supervisord
+
+Iniciar el proceso supervisord utilizando el archivo de configuracion /var/www/ht...:
+    supervisord -c /var/www/html/docker/supervisord.conf
+
+Consultar el estado actual de los procesos que esta supervisando supervisord:
+    supervisorctl -c /var/www/html/docker/supervisord.conf status
+
+Arranque manual de un worker de la cola default:
+    supervisorctl -c /var/www/html/docker/supervisord.conf start laravel-cola-default:laravel-cola-default_00
+    supervisorctl -c /var/www/html/docker/supervisord.conf start laravel-cola-default:0
+

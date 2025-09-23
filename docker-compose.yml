@@ -3,6 +3,8 @@ services:
         build:
             context: ./vendor/laravel/sail/runtimes/8.4
             dockerfile: Dockerfile
+            # context: .          # ahora el contexto es la raíz de tu proyecto
+            # dockerfile: docker/Dockerfile  # tu Dockerfile personalizado
             args:
                 WWWGROUP: '${WWWGROUP}'
         image: sail-8.4/app

@@ -2,19 +2,30 @@
 
 namespace App\Services;
 
+use App\Gestor\RabbitAction;
 use App\Jobs\CrudJob;
 use App\Jobs\CrudLoteJob;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 
 class ColaAction
 {
-    public function encolar(string $serviceClass, string $metodo, $cola = "default", ...$params)
+    protected RabbitAction $rabbitAction;
+
+    public function __construct(RabbitAction $rabbitAction)
+    {
+        $this->rabbitAction = $rabbitAction;
+    }
+
+    public function encolar(string $serviceClass, string $metodo, ...$params)
     {
         $uuid = Str::uuid()->toString();
 
-        CrudJob::dispatch($serviceClass, $metodo, $params, $uuid)->onQueue($cola);
+        CrudJob::dispatch($serviceClass, $metodo, $params, $uuid)->onQueue($this->rabbitAction->getColaLibre());
+
+        Artisan::call('workers:escalar');
 
         Cache::put("t:$uuid", "procesando", config('cache.tiempo_cache'));
 

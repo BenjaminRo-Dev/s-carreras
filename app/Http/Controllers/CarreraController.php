@@ -38,15 +38,15 @@ class CarreraController extends Controller
             'facultad_id' => 'required|integer',
         ]);
 
-        $cola = $request->header('cola', "default");
-        $lote = $request->header('lote', "false");
+        // $cola = $request->header('cola', "default");
+        // $lote = $request->header('lote', "false");
 
-        if($lote == 'true'){
-            return $this->colaAction->encolarLote(CarreraService::class, 'guardar', $cola, $datos);
-        }
+        // if($lote == 'true'){
+        //     return $this->colaAction->encolarLote(CarreraService::class, 'guardar', $cola, $datos);
+        // }
 
         return $this->usarCola
-            ? $this->colaAction->encolar(CarreraService::class, 'guardar', $cola, $datos)
+            ? $this->colaAction->encolar(CarreraService::class, 'guardar', $datos)
             : $this->service->guardar($datos);
     }
 
