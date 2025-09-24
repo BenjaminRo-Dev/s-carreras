@@ -3,12 +3,13 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+
+use Illuminate\Support\Str;
 
 class EscalarWorkers extends Command
 {
-    // protected $signature = 'app:escalar-workers';
-    
     protected $signature = 'workers:escalar';
     protected $description = 'Escala el número de workers basándose en la longitud de las colas';
 
@@ -50,8 +51,8 @@ class EscalarWorkers extends Command
                 $pendientes > 5 => 2,
                 default => 1,
             };
-
-            $programa = "laravel-{$cola['name']}";
+            
+            $programa = "laravel-cola-{$cola['name']}";
             $this->escalarSupervisor($programa, $necesarios);
 
             $this->info("Cola: {$cola['name']} - Pendientes: $pendientes - Workers: $necesarios");
@@ -64,21 +65,21 @@ class EscalarWorkers extends Command
     {
         $conf = '/var/www/html/docker/supervisord.conf';
 
-        // Primero detenemos todos los workers de ese programa
         exec("supervisorctl -c {$conf} stop {$programa}:*");
 
-        // Arrancamos solo los necesarios
         for ($i = 0; $i < $numWorkers; $i++) {
-            exec("supervisorctl -c {$conf} start {$programa}:{$i}");
+            exec("supervisorctl -c {$conf} start {$programa}:0{$i}");
         }
-
-
-
-        // $comando = "sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl scale {$programa}={$numWorkers}";
-        // exec($comando, $output, $returnVar);
-
-        // if ($returnVar !== 0) {
-        //     $this->error("Error al escalar el programa $programa");
-        // }
     }
+
+
+            //Para depurar dentro del for:
+            // $uuid = Str::uuid();
+            // Cache::put("escalar:$uuid", "supervisorctl -c {$conf} start {$programa}:0{$i}", config('cache.tiempo_cache_error'));
+        
+            // Cache::put("escalar:$uuid:$i", [
+            //     'cmd' => "supervisorctl -c {$conf} start {$programa}:0{$i}",
+            //     'output' => $output,
+            //     'status' => $returnVar,
+            // ], config('cache.tiempo_cache_error'));  
 }

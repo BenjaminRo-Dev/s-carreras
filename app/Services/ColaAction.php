@@ -25,7 +25,7 @@ class ColaAction
 
         CrudJob::dispatch($serviceClass, $metodo, $params, $uuid)->onQueue($this->rabbitAction->getColaLibre());
 
-        Artisan::call('workers:escalar');
+        // TODO: Revisar si tal vez sea mejor ejecutar aqui la llamada controlada al Escalador de Workers
 
         Cache::put("t:$uuid", "procesando", config('cache.tiempo_cache'));
 

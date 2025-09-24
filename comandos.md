@@ -95,3 +95,8 @@ Arranque manual de un worker de la cola default:
     supervisorctl -c /var/www/html/docker/supervisord.conf start laravel-cola-default:laravel-cola-default_00
     supervisorctl -c /var/www/html/docker/supervisord.conf start laravel-cola-default:0
 
+
+    supervisorctl -c /var/www/html/docker/supervisord.conf start laravel-cola-default:0
+
+Detener manual una cola:
+    supervisorctl -c /var/www/html/docker/supervisord.conf stop laravel-cola-default:*

@@ -1,8 +1,0 @@
-#!/bin/bash
-# docker/start-container-with-supervisor.sh
-
-# Arrancar supervisord en background
-supervisord -c /var/www/html/docker/supervisord.conf
-
-# Ejecutar el entrypoint original de Sail
-exec /usr/local/bin/start-container "$@"
