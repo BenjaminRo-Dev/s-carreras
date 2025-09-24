@@ -47,11 +47,12 @@ class EscalarWorkers extends Command
 
             $pendientes = $cola['messages_ready'] ?? 0;
             $necesarios = match (true) {
-                $pendientes > 10 => 3,
-                $pendientes > 5 => 2,
-                default => 1,
+                $pendientes > 1000 => 3,
+                $pendientes > 500 => 2,
+                $pendientes > 0 => 1,
+                default => 0,
             };
-            
+
             $programa = "laravel-cola-{$cola['name']}";
             $this->escalarSupervisor($programa, $necesarios);
 

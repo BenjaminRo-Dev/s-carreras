@@ -100,3 +100,7 @@ Arranque manual de un worker de la cola default:
 
 Detener manual una cola:
     supervisorctl -c /var/www/html/docker/supervisord.conf stop laravel-cola-default:*
+
+
+php artisan workers:escala //Ejecutar un archivo comando
+sail artisan schedule:work //Ejecutar el route/console.php

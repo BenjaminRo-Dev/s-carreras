@@ -19,6 +19,22 @@ class ColaAction
         $this->rabbitAction = $rabbitAction;
     }
 
+    public function encolarCola2(string $serviceClass, string $metodo, ...$params)
+    {
+        $uuid = Str::uuid()->toString();
+
+        CrudJob::dispatch($serviceClass, $metodo, $params, $uuid)->onQueue('santacruz');
+
+        Cache::put("t:$uuid", "procesando", config('cache.tiempo_cache'));
+
+        return response()->json([
+            'message' => 'Operacion en proceso',
+            'url' => url("api/estado/$uuid"),
+            'transaction_id' => $uuid,
+            'status' => 'procesando'
+        ], 202);
+    }
+
     public function encolar(string $serviceClass, string $metodo, ...$params)
     {
         $uuid = Str::uuid()->toString();

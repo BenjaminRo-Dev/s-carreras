@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Schedule;
 //     $this->comment(Inspiring::quote());
 // })->purpose('Display an inspiring quote');
 
+// Schedule::call(function () {
+//     Artisan::call('workers:escalar');  
+// })->everyFiveSeconds();
+
 Schedule::call(function () {
-    Artisan::call('workers:escalar');  
+    Artisan::call('workers:escala');  
 })->everyFiveSeconds();

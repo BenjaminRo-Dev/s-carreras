@@ -40,7 +40,7 @@ class GrupoController extends Controller
         ]);
 
         return $this->usarCola
-            ? $this->colaAction->encolar(GrupoService::class, 'guardar', $datos)
+            ? $this->colaAction->encolarCola2(GrupoService::class, 'guardar', $datos)
             : $this->service->guardar($datos);
     }
 
