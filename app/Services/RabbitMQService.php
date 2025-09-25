@@ -65,4 +65,30 @@ class RabbitMQService
         return $this->colaMasCorta();
     }
 
+    public function crearCola(string $queueName, string $vhost = '/', array $params = []): bool
+    {
+        $url = "{$this->host}/api/queues/" . urlencode($vhost) . "/" . urlencode($queueName);
+
+        // Parámetros básicos de la cola, puedes agregar más según necesidad
+        $body = array_merge([
+            'auto_delete' => false,
+            'durable' => true,
+            'arguments' => new \stdClass()
+        ], $params);
+
+        $respuesta = Http::withBasicAuth($this->user, $this->password)
+            ->timeout(30)
+            ->put($url, $body);
+
+        if ($respuesta->failed()) {
+            Log::error('Error creando cola en RabbitMQ', [
+                'status' => $respuesta->status(),
+                'error' => $respuesta->body()
+            ]);
+            throw new \Exception("No se pudo crear la cola: " . $respuesta->status());
+        }
+
+        return true;
+    }
+
 }

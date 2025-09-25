@@ -104,3 +104,4 @@ Detener manual una cola:
 
 php artisan workers:escala //Ejecutar un archivo comando
 sail artisan schedule:work //Ejecutar el route/console.php
+sail artisan schedule:run 

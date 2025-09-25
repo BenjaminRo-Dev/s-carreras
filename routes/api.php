@@ -15,11 +15,16 @@ use App\Http\Controllers\FacultadController;
 use App\Http\Controllers\GrupoEstudianteController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\PlanEstudioController;
+use App\Http\Controllers\RabbitMQController;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::routes();
 
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/rabbitmq/info-colas', [RabbitMQController::class, 'getInfoColas']);
+Route::get('/rabbitmq/longitudes-colas', [RabbitMQController::class, 'getLongitudesColas']);
+Route::post('/rabbitmq/crear-cola', [RabbitMQController::class, 'crearCola']);
 
 //Hola mundo
 Route::get('/hola', function () {

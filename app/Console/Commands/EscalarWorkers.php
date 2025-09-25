@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 use Illuminate\Support\Str;
-
+//VERSION ANTERIOR: ESTA VERSION ESCALABA SOLO N WORKERS DEFINIDOS PERO SOLO PARA COLAS CONFIGURADAS CON ATERIORIRDAD EN EL ARCHIVO SUPERVISORD.CONF
 class EscalarWorkers extends Command
 {
     protected $signature = 'workers:escalar';

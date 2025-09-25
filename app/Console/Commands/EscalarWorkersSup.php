@@ -10,6 +10,8 @@ class EscalarWorkersSup extends Command
     protected $signature = 'workers:escala';
     protected $description = 'Escala el número de workers basándose en la longitud de las colas';
 
+    protected static $maxProcesos = 5;
+
     public function __construct(protected RabbitMQService $rabbitMQService)
     {
         parent::__construct();
@@ -29,8 +31,8 @@ class EscalarWorkersSup extends Command
         $estadoNuevo = [];
         foreach ($colas as $cola => $pendientes) {
             $estadoNuevo[$cola] = match (true) {
-                $pendientes > 50 => 15,
-                $pendientes > 20 => 2,
+                $pendientes > 1000 => 3,
+                $pendientes > 500 => 2,
                 $pendientes > 0 => 1,
                 default => 0,
             };
@@ -76,7 +78,7 @@ class EscalarWorkersSup extends Command
             $procesos .= "autostart=false\n";
             $procesos .= "autorestart=true\n";
             $procesos .= "user=sail\n";
-            $procesos .= "numprocs=50\n";
+            $procesos .= "numprocs=" . self::$maxProcesos . "\n";
             $procesos .= "redirect_stderr=true\n";
             $procesos .= "stdout_logfile=/var/log/supervisor/laravel-cola-{$cola}.log\n";
         }

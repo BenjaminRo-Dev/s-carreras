@@ -2,21 +2,18 @@
 
 namespace App\Services;
 
-use App\Gestor\RabbitAction;
 use App\Jobs\CrudJob;
 use App\Jobs\CrudLoteJob;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 
 class ColaAction
 {
-    protected RabbitAction $rabbitAction;
 
-    public function __construct(RabbitAction $rabbitAction)
+    public function __construct(protected RabbitMQService $rabbitMQService)
     {
-        $this->rabbitAction = $rabbitAction;
+        $this->rabbitMQService = $rabbitMQService;
     }
 
     public function encolarCola2(string $serviceClass, string $metodo, ...$params)
@@ -39,7 +36,7 @@ class ColaAction
     {
         $uuid = Str::uuid()->toString();
 
-        CrudJob::dispatch($serviceClass, $metodo, $params, $uuid)->onQueue($this->rabbitAction->getColaLibre());
+        CrudJob::dispatch($serviceClass, $metodo, $params, $uuid)->onQueue($this->rabbitMQService->getColaLibre());
 
         // TODO: Revisar si tal vez sea mejor ejecutar aqui la llamada controlada al Escalador de Workers
 

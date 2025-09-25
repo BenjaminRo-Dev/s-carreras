@@ -37,6 +37,9 @@ class CrudJob implements ShouldQueue
         } else {
             $respuesta = $servicio->{$this->metodo}();
         }
+
+        sleep(2); 
+
         Cache::put("t:$this->uuid", $respuesta, config('cache.tiempo_cache'));
         // broadcast(new JobFinalizado($this->datos));
     }
