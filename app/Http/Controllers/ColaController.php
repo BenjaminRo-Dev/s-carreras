@@ -3,11 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ColaService;
-use App\Services\RabbitMQService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 
 class ColaController extends Controller
 {
@@ -32,13 +28,22 @@ class ColaController extends Controller
         return $this->colaService->estadoHilos();
     }
 
-    public function estadoUnHilo(Request $request)
+    public function cambiarEstadoHilo(Request $request)
     {
         $request->validate([
             'accion' => 'required|string|in:start,stop,status',
             'hilo' => 'required|string',
         ]);
 
-        return $this->colaService->estadoUnHilo($request->accion, $request->hilo);
+        return $this->colaService->cambiarEstadoHilo($request->accion, $request->hilo);
+    }
+
+    public function eliminarCola(Request $request)
+    {
+        $request->validate([
+            'cola' => 'required|string',
+        ]);
+
+        return $this->colaService->eliminarCola($request->cola);
     }
 }

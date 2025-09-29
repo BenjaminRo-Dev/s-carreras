@@ -26,7 +26,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('colas/', [ColaController::class, 'asignarWorkers']);
 Route::post('colas/estado', [ColaController::class, 'estado']);
 Route::get('colas/estado-hilos', [ColaController::class, 'estadoHilos']);
-Route::post('colas/estado-un-hilo', [ColaController::class, 'estadoUnHilo']);
+Route::post('colas/estado-un-hilo', [ColaController::class, 'cambiarEstadoHilo']);
+Route::post('colas/eliminar', [ColaController::class, 'eliminarCola']);
 
 Route::get('/rabbitmq/info-colas', [RabbitMQController::class, 'getInfoColas']);
 Route::get('/rabbitmq/longitudes-colas', [RabbitMQController::class, 'getLongitudesColas']);

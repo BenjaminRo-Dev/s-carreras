@@ -69,7 +69,7 @@ class ColaService
         }
     }
 
-    public function estadoUnHilo(string $accion, string $hilo)
+    public function cambiarEstadoHilo(string $accion, string $hilo)
     {
         $comando = new Process([
             'supervisorctl',
@@ -91,4 +91,36 @@ class ColaService
             'detalles' => explode("\n", trim($comando->getOutput()))
         ]);
     }
+    
+    public function eliminarCola(string $nombreCola)
+    {
+        try {
+            if($this->rabbitMQService->getLongitud($nombreCola) === 0){
+
+                Artisan::call('eliminar-workers', [
+                    'cola' => $nombreCola,
+                ]);
+
+                $this->rabbitMQService->eliminarCola($nombreCola);
+
+                return response()->json([
+                    'success' => "La cola '{$nombreCola}' ha sido eliminada."
+                ], 200);
+
+            }
+
+            return response()->json([
+                'info' => "La cola '{$nombreCola}' no puede ser eliminada porque tiene trabajos por procesar."  
+            ], 200);
+            
+        } catch (\Exception $e) {
+            Log::error("Error eliminando la cola '{$nombreCola}': " . $e->getMessage(), ['exception' => $e]);
+            
+            return response()->json([
+                'error' => "No se pudo eliminar la cola '{$nombreCola}'.",
+                'detalles' => $e->getMessage()
+            ], 500);   
+        }
+    }
+    
 }

@@ -42,7 +42,7 @@ class CrearWorkers extends Command
             exec("supervisorctl reread");
             exec("supervisorctl update");
 
-            // Reiniciar la cola para que use la nueva cantidad de workers
+            // Reiniciar procesos de la cola para que use la nueva cantidad de workers
             exec("supervisorctl stop cola-{$cola}:*");
             if ($cant > 0) {
                 exec("supervisorctl start cola-{$cola}:*");

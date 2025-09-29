@@ -43,6 +43,19 @@ class RabbitMQService
         return isset($colas[$nombreCola]);
     }
 
+    public function getLongitud(string $nombreCola): int
+    {
+        $colas = $this->getInfoColas();
+
+        foreach ($colas as $cola) {
+            if ($cola['name'] === $nombreCola) {
+                return $cola['messages_ready'] ?? 0;
+            }
+        }
+
+        throw new \Exception("La cola '{$nombreCola}' no existe.");
+    }
+
     public function getLongitudesColas(): array
     {
         $infoColas = $this->getInfoColas();
@@ -66,14 +79,14 @@ class RabbitMQService
         return array_key_first($longitudes);
     }
 
-    public function getColaLibre(): string
+    public function getColaCorta(): string
     {
         return $this->colaMasCorta();
     }
 
-    public function crearCola(string $queueName, string $vhost = '/', array $params = []): bool
+    public function crearCola(string $nombreCola, string $vhost = '/', array $params = []): bool
     {
-        $url = "{$this->host}/api/queues/" . urlencode($vhost) . "/" . urlencode($queueName);
+        $url = "{$this->host}/api/queues/" . urlencode($vhost) . "/" . urlencode($nombreCola);
 
         $body = array_merge([
             'auto_delete' => false,
@@ -91,6 +104,25 @@ class RabbitMQService
                 'error' => $respuesta->body()
             ]);
             throw new \Exception("No se pudo crear la cola: " . $respuesta->status());
+        }
+
+        return true;
+    }
+
+    public function eliminarCola(string $nombreCola, string $vhost = '/'): bool
+    {
+        $url = "{$this->host}/api/queues/" . urlencode($vhost) . "/" . urlencode($nombreCola);
+
+        $respuesta = Http::withBasicAuth($this->user, $this->password)
+            ->timeout(30)
+            ->delete($url);
+
+        if ($respuesta->failed()) {
+            Log::error('Error eliminando cola en RabbitMQ', [
+                'status' => $respuesta->status(),
+                'error' => $respuesta->body()
+            ]);
+            throw new \Exception("No se pudo eliminar la cola: " . $respuesta->status());
         }
 
         return true;
