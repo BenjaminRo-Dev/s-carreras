@@ -88,8 +88,12 @@ Detener todas las instncias del proceso supervisord:
 Iniciar el proceso supervisord utilizando el archivo de configuracion /var/www/ht...:
     supervisord -c /var/www/html/docker/supervisord.conf
 
+    supervisord -c /var/www/html/docker/conf.d/supervisord.conf
+
 Consultar el estado actual de los procesos que esta supervisando supervisord:
     supervisorctl -c /var/www/html/docker/supervisord.conf status
+
+    supervisorctl -c /var/www/html/docker/conf.d/supervisord.conf status
 
 Arranque manual de un worker de la cola default:
     supervisorctl -c /var/www/html/docker/supervisord.conf start laravel-cola-default:laravel-cola-default_00

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AulaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CarreraController;
+use App\Http\Controllers\ColaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\ModuloController;
 use App\Http\Controllers\DocenteController;
@@ -21,6 +22,10 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::routes();
 
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::post('colas/', [ColaController::class, 'create']);
+Route::post('colas/estado', [ColaController::class, 'estado']);
+Route::get('colas/estado-hilos', [ColaController::class, 'estadoHilos']);
 
 Route::get('/rabbitmq/info-colas', [RabbitMQController::class, 'getInfoColas']);
 Route::get('/rabbitmq/longitudes-colas', [RabbitMQController::class, 'getLongitudesColas']);

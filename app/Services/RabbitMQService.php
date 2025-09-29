@@ -37,6 +37,12 @@ class RabbitMQService
         return $respuesta->json();
     }
 
+    public function existeCola(string $nombreCola): bool
+    {
+        $colas = $this->getInfoColas();
+        return isset($colas[$nombreCola]);
+    }
+
     public function getLongitudesColas(): array
     {
         $infoColas = $this->getInfoColas();
@@ -69,7 +75,6 @@ class RabbitMQService
     {
         $url = "{$this->host}/api/queues/" . urlencode($vhost) . "/" . urlencode($queueName);
 
-        // Parámetros básicos de la cola, puedes agregar más según necesidad
         $body = array_merge([
             'auto_delete' => false,
             'durable' => true,
