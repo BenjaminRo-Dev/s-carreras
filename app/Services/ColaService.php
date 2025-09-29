@@ -18,8 +18,8 @@ class ColaService
     public function asignarWorkers(string $cola, int $workers)
     {
         if (!$this->rabbitMQService->existeCola($cola)) {
-            // $this->rabbitMQService->crearCola($cola);
-            return response()->json(['error' => "La cola '{$cola}' no existe en RabbitMQ."], 404);
+            $this->rabbitMQService->crearCola($cola);
+            // return response()->json(['error' => "La cola '{$cola}' no existe en RabbitMQ."], 404);
         }
 
         $workersAsignados = Artisan::call('crear-workers', [
@@ -67,5 +67,28 @@ class ColaService
                 'detalles' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function estadoUnHilo(string $accion, string $hilo)
+    {
+        $comando = new Process([
+            'supervisorctl',
+            '-c', '/var/www/html/docker/conf.d/supervisord.conf',
+            $accion,
+            $hilo
+        ]);
+
+        $comando->run();
+
+        if (!$comando->isSuccessful()) {
+            Log::error("Error ejecutando supervisorctl: " . $comando->getErrorOutput());
+            throw new ProcessFailedException($comando);
+        }
+
+        return response()->json([
+            'accion' => $accion,
+            'hilo' => $hilo,
+            'detalles' => explode("\n", trim($comando->getOutput()))
+        ]);
     }
 }

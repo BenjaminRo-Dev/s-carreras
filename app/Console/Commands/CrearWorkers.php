@@ -23,10 +23,10 @@ class CrearWorkers extends Command
                 mkdir($rutaConfDir, 0775, true);
             }
 
-            $archivoConf = $rutaConfDir . "/laravel-cola-{$cola}.conf";
+            $archivoConf = $rutaConfDir . "/cola-{$cola}.conf";
 
             // Crear o actualizar el archivo .conf de la cola
-            $contenido = "[program:laravel-cola-{$cola}]\n"
+            $contenido = "[program:cola-{$cola}]\n"
                 . "process_name=%(process_num)d\n"
                 . "command=php /var/www/html/artisan queue:work rabbitmq --queue={$cola} --sleep=3 --tries=3\n"
                 . "autostart=true\n"
@@ -34,7 +34,7 @@ class CrearWorkers extends Command
                 . "user=sail\n"
                 . "numprocs={$cant}\n"
                 . "redirect_stderr=true\n"
-                . "stdout_logfile=/var/log/supervisor/laravel-cola-{$cola}.log\n";
+                . "stdout_logfile=/var/log/supervisor/cola-{$cola}.log\n";
 
             file_put_contents($archivoConf, $contenido);
 
@@ -43,9 +43,9 @@ class CrearWorkers extends Command
             exec("supervisorctl update");
 
             // Reiniciar la cola para que use la nueva cantidad de workers
-            exec("supervisorctl stop laravel-cola-{$cola}:*");
+            exec("supervisorctl stop cola-{$cola}:*");
             if ($cant > 0) {
-                exec("supervisorctl start laravel-cola-{$cola}:*");
+                exec("supervisorctl start cola-{$cola}:*");
             }
 
             $this->info("Cola '{$cola}' ahora tiene {$cant} workers activos.");

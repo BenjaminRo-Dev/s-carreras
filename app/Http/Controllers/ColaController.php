@@ -32,34 +32,13 @@ class ColaController extends Controller
         return $this->colaService->estadoHilos();
     }
 
-    public function estado(Request $request)
+    public function estadoUnHilo(Request $request)
     {
         $request->validate([
-            'action' => 'required|string|in:start,stop,status',
-            'program' => 'required|string',
+            'accion' => 'required|string|in:start,stop,status',
+            'hilo' => 'required|string',
         ]);
 
-        $action = $request->input('action');
-        $program = $request->input('program');
-
-        // Ejecuta supervisorctl
-        $process = new Process([
-            'supervisorctl',
-            '-c', '/var/www/html/docker/conf.d/supervisord.conf',
-            $action,
-            $program
-        ]);
-
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        return response()->json([
-            'action' => $action,
-            'program' => $program,
-            'output' => explode("\n", trim($process->getOutput()))
-        ]);
+        return $this->colaService->estadoUnHilo($request->accion, $request->hilo);
     }
 }
