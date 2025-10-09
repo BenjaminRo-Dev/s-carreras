@@ -69,6 +69,7 @@ sail artisan queue:listen --queue=123abc
 Ingresar a un contenedor:
 docker exec -it nombre-contenedor bash
     docker exec -it s-carreras-laravel.test-1 bash
+    docker exec -it desarrollo-laravel.database-1 bash
 
 
     Reconstruir un contenedor:
