@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  laravel.database:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-database
+    ports:
+      - "89:80"
+    volumes:
+      - .:/var/www/html
+    env_file:
+      - .env
+    environment:
+      DB_HOST: ${DB_HOST:-pgsql}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_DATABASE: ${DB_DATABASE:-laravel}
+      DB_USERNAME: ${DB_USERNAME:-benjamin}
+      DB_PASSWORD: ${DB_PASSWORD:-03091542}
+    depends_on:
+      - pgsql
+    command: >
+      sh -c "php artisan migrate:fresh --seed && php-fpm"
+    networks:
+      - microservicios-topicos
+
+  pgsql:
+    image: postgres:17-alpine
+    container_name: pgsql
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-laravel}
+      POSTGRES_USER: ${DB_USERNAME:-benjamin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-03091542}
+    volumes:
+      - sail-pgsql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+      retries: 5
+      timeout: 5s
+      interval: 3s
+    networks:
+      - microservicios-topicos
+
+volumes:
+  sail-pgsql:
+
+networks:
+  microservicios-topicos:
+    external: true
