@@ -20,8 +20,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-03091542}
     depends_on:
       - pgsql
-    command: >
-      sh -c "php artisan migrate:fresh --seed && php-fpm"
+    # command: >
+    #   sh -c "php artisan migrate:fresh --seed && php-fpm"
     networks:
       - microservicios-topicos
 
