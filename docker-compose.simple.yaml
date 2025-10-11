@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   laravel.database:
     build:
@@ -22,6 +20,8 @@ services:
       - pgsql
     # command: >
     #   sh -c "php artisan migrate:fresh --seed && php-fpm"
+    command: >
+      sh -c "composer install && php artisan serve --host=0.0.0.0 --port=80"
     networks:
       - microservicios-topicos
 
