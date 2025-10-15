@@ -16,6 +16,7 @@ class DocenteController extends Controller
     {
         $request->validate([
             'registro' => 'required|string|unique:docentes',
+            'codigo' => 'required|string',
             'nombre' => 'required|string',
             'email' => 'nullable|email|unique:docentes',
             'telefono' => 'nullable|string'
@@ -35,6 +36,7 @@ class DocenteController extends Controller
 
         $request->validate([
             'registro' => 'required|string|unique:docentes,registro,' . $id,
+            'codigo' => 'required|string',
             'nombre' => 'required|string',
             'email' => 'nullable|email|unique:docentes,email,' . $id,
             'telefono' => 'nullable|string'

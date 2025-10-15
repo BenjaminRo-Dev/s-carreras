@@ -30,6 +30,7 @@ class EstudianteController extends Controller
     {
         $request->validate([
             'registro' => 'required|string',
+            'codigo' => 'required|string',
             'nombre' => 'required|string',
             'email' => 'nullable|email',
             'telefono' => 'nullable|string',
@@ -43,6 +44,7 @@ class EstudianteController extends Controller
     {
         $request->validate([
             'registro' => 'required|string',
+            'codigo' => 'required|string',
             'nombre' => 'required|string',
             'email' => 'nullable|email',
             'telefono' => 'nullable|string'

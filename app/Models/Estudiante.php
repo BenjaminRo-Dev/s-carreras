@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Estudiante extends Model
 {
     protected $table = 'estudiantes';
-    protected $fillable = ['registro', 'nombre', 'email', 'telefono', 'user_id', 'plan_estudio_id'];
+    protected $fillable = ['registro', 'codigo', 'nombre', 'email', 'telefono', 'plan_estudio_id'];
 
     //Un estudiante esta en 1 plan de estudio:
     public function planEstudio()
@@ -26,9 +26,4 @@ class Estudiante extends Model
         return $this->hasMany(GrupoEstudiante::class, 'estudiante_id');
     }
 
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 }

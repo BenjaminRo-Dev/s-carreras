@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Docente extends Model
 {
     protected $table = 'docentes';
-    protected $fillable = ['registro', 'nombre', 'email', 'telefono'];
+    protected $fillable = ['registro', 'codigo', 'nombre', 'email', 'telefono'];
 
     // Un docente puede tener muchos grupos
     public function grupos()

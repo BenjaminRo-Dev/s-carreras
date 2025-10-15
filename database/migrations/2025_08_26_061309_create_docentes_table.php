@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('docentes', function (Blueprint $table) {
             $table->id();
             $table->string('registro')->unique();
+            $table->string('codigo')->default('12345');
             $table->string('nombre');
             $table->string('email')->unique()->nullable();
             $table->string('telefono')->nullable();
