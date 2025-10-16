@@ -1,4 +1,5 @@
 php artisan serve --port=8080
+docker exec -it laravel-database php artisan migrate:fresh --seed
 
 
 **Ejecutar RabbitMQ**
