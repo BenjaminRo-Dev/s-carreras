@@ -34,7 +34,8 @@ class DatabaseSeeder extends Seeder
             GrupoSeeder::class,
             HorarioSeeder::class,
             InscripcionSeeder::class,
-            GrupoEstudianteSeeder::class
+            GrupoEstudianteSeeder::class,
+            HistorialSeeder::class,
         ]);
     }
 }
