@@ -50,6 +50,7 @@ class GrupoSeeder extends Seeder
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 10, 'docente_id' => 4, 'gestion_id' => 5],
             ['sigla' => 'SB', 'cupo' => 40, 'materia_id' => 10, 'docente_id' => 5, 'gestion_id' => 5],
 
+            //21:
             // Nivel 3 - FISICA 3
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 11, 'docente_id' => 1, 'gestion_id' => 5],
             ['sigla' => 'SB', 'cupo' => 40, 'materia_id' => 11, 'docente_id' => 2, 'gestion_id' => 5],
@@ -67,6 +68,7 @@ class GrupoSeeder extends Seeder
             // Nivel 3 - ECUACIONES DIFERENCIALES
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 15, 'docente_id' => 2, 'gestion_id' => 5],
 
+            //28:
             // Nivel 4 - CONTABILIDAD
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 16, 'docente_id' => 3, 'gestion_id' => 5],
             
@@ -84,6 +86,7 @@ class GrupoSeeder extends Seeder
             // Nivel 4 - METODOS NUMÉRICOS
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 20, 'docente_id' => 4, 'gestion_id' => 5],
 
+            //35:
             // Nivel 5 - ESTRUCTURA DE DATOS 2
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 21, 'docente_id' => 5, 'gestion_id' => 5],
             ['sigla' => 'SB', 'cupo' => 40, 'materia_id' => 21, 'docente_id' => 1, 'gestion_id' => 5],
@@ -107,6 +110,7 @@ class GrupoSeeder extends Seeder
             // Nivel 5 - PROGRAMACIÓN GRAFICA
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 27, 'docente_id' => 3, 'gestion_id' => 5],
 
+            //44
             // Nivel 6 - BASE DE DATOS 2
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 28, 'docente_id' => 4, 'gestion_id' => 5],
             ['sigla' => 'SB', 'cupo' => 40, 'materia_id' => 28, 'docente_id' => 5, 'gestion_id' => 5],
@@ -131,69 +135,71 @@ class GrupoSeeder extends Seeder
             // Nivel 6 - PROGRAMACIÓN DE APLICACIONES EN TIEMPO REAL
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 34, 'docente_id' => 3, 'gestion_id' => 5],
 
+            //54
             // Nivel 7 - MODALIDAD DE TITULACION A NIVEL TECNICO SUPERIOR
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 35, 'docente_id' => 4, 'gestion_id' => 5],
             
-            // Nivel 7 - REDES 1
+            // 55 - Nivel 7 - REDES 1
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 36, 'docente_id' => 5, 'gestion_id' => 5],
             ['sigla' => 'SB', 'cupo' => 40, 'materia_id' => 36, 'docente_id' => 1, 'gestion_id' => 5],
             
-            // Nivel 7 - SISTEMAS OPERATIVOS 2
+            //57 - Nivel 7 - SISTEMAS OPERATIVOS 2
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 37, 'docente_id' => 2, 'gestion_id' => 5],
             
-            // Nivel 7 - INVESTIGACION OPERATIVA 2
+            //58 - Nivel 7 - INVESTIGACION OPERATIVA 2
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 38, 'docente_id' => 3, 'gestion_id' => 5],
             
-            // Nivel 7 - INTELIGENCIA ARTIFICIAL
+            //59 - Nivel 7 - INTELIGENCIA ARTIFICIAL
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 39, 'docente_id' => 4, 'gestion_id' => 5],
             ['sigla' => 'SB', 'cupo' => 40, 'materia_id' => 39, 'docente_id' => 5, 'gestion_id' => 5],
             
-            // Nivel 7 - SISTEMAS DE INFORMACIÓN 2
+            // 61 - Nivel 7 - SISTEMAS DE INFORMACIÓN 2
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 40, 'docente_id' => 1, 'gestion_id' => 5],
             
-            // Nivel 7 - SISTEMAS DISTRIBUIDOS
+            // 62 - Nivel 7 - SISTEMAS DISTRIBUIDOS
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 41, 'docente_id' => 2, 'gestion_id' => 5],
-            
-            // Nivel 7 - INTERACCIÓN HOMBRE - COMPUTADOR
+
+            //63 - Nivel 7 - INTERACCIÓN HOMBRE - COMPUTADOR
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 42, 'docente_id' => 3, 'gestion_id' => 5],
 
+            //64
             // Nivel 8 - REDES 2
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 43, 'docente_id' => 4, 'gestion_id' => 5],
             
-            // Nivel 8 - PREPARACION Y EVALUACION DE PROYECTOS
+            // 65 - Nivel 8 - PREPARACION Y EVALUACION DE PROYECTOS
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 44, 'docente_id' => 5, 'gestion_id' => 5],
             
-            // Nivel 8 - SISTEMAS EXPERTOS
+            // 66 - Nivel 8 - SISTEMAS EXPERTOS
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 45, 'docente_id' => 1, 'gestion_id' => 5],
             
-            // Nivel 8 - INGENIERIA DE SOFTWARE 1
+            // 67 - Nivel 8 - INGENIERIA DE SOFTWARE 1
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 46, 'docente_id' => 2, 'gestion_id' => 5],
             ['sigla' => 'SB', 'cupo' => 40, 'materia_id' => 46, 'docente_id' => 3, 'gestion_id' => 5],
             
-            // Nivel 8 - SISTEMAS DE INFORMACIÓN GEOGRÁFICA
+            // 69 - Nivel 8 - SISTEMAS DE INFORMACIÓN GEOGRÁFICA
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 47, 'docente_id' => 4, 'gestion_id' => 5],
             
-            // Nivel 8 - CRIPTOGRAFIA Y SEGURIDAD
+            // 70 - Nivel 8 - CRIPTOGRAFIA Y SEGURIDAD
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 48, 'docente_id' => 5, 'gestion_id' => 5],
             
-            // Nivel 8 - CONTROL Y AUTOMATIZACIÓN
+            // 71 - Nivel 8 - CONTROL Y AUTOMATIZACIÓN
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 49, 'docente_id' => 1, 'gestion_id' => 5],
 
-            // Nivel 9 - TALLER DE GRADO 1
+            // 72 - Nivel 9 - TALLER DE GRADO 1
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 50, 'docente_id' => 2, 'gestion_id' => 5],
             
-            // Nivel 9 - INGENIERIA DE SOFTWARE 2
+            // 73 - Nivel 9 - INGENIERIA DE SOFTWARE 2
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 51, 'docente_id' => 3, 'gestion_id' => 5],
             ['sigla' => 'SB', 'cupo' => 40, 'materia_id' => 51, 'docente_id' => 4, 'gestion_id' => 5],
             
-            // Nivel 9 - TECNOLOGÍA WEB
+            // 75 - Nivel 9 - TECNOLOGÍA WEB
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 52, 'docente_id' => 5, 'gestion_id' => 5],
             ['sigla' => 'SB', 'cupo' => 40, 'materia_id' => 52, 'docente_id' => 1, 'gestion_id' => 5],
             
-            // Nivel 9 - ARQUITECTURA DEL SOFTWARE
+            // 77 -  Nivel 9 - ARQUITECTURA DEL SOFTWARE
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 53, 'docente_id' => 2, 'gestion_id' => 5],
 
-            // Nivel 10 - MODALIDAD DE TITULACIÓN LICENCIATURA
+            //78 - Nivel 10 - MODALIDAD DE TITULACIÓN LICENCIATURA
             ['sigla' => 'SA', 'cupo' => 40, 'materia_id' => 54, 'docente_id' => 3, 'gestion_id' => 5],
         ];
 
